@@ -80,21 +80,21 @@ public class DriverController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') and principal.username == 'anshptk949@gmail.com'")
+    @PreAuthorize("hasRole('ADMIN') and principal.username == 'admin@herride.com'")
     public ResponseEntity<ApiResponse<List<DriverProfileResponse>>> getAllDrivers() {
         List<DriverProfileResponse> response = driverProfileService.getAllDrivers();
         return ResponseEntity.ok(ApiResponse.success("All drivers retrieved", response));
     }
 
     @GetMapping("/pending")
-    @PreAuthorize("hasRole('ADMIN') and principal.username == 'anshptk949@gmail.com'")
+    @PreAuthorize("hasRole('ADMIN') and principal.username == 'admin@herride.com'")
     public ResponseEntity<ApiResponse<List<DriverProfileResponse>>> getPendingDrivers() {
         List<DriverProfileResponse> response = driverProfileService.getPendingDrivers();
         return ResponseEntity.ok(ApiResponse.success("Pending drivers retrieved", response));
     }
 
     @PostMapping("/approve")
-    @PreAuthorize("hasRole('ADMIN') and principal.username == 'anshptk949@gmail.com'")
+    @PreAuthorize("hasRole('ADMIN') and principal.username == 'admin@herride.com'")
     public ResponseEntity<ApiResponse<DriverProfileResponse>> approveDriver(
             @RequestParam Long driverId) {
         DriverProfileResponse response = driverProfileService.approveDriver(driverId);
@@ -102,10 +102,11 @@ public class DriverController {
     }
 
     @PostMapping("/reject")
-    @PreAuthorize("hasRole('ADMIN') and principal.username == 'anshptk949@gmail.com'")
+    @PreAuthorize("hasRole('ADMIN') and principal.username == 'admin@herride.com'")
     public ResponseEntity<ApiResponse<DriverProfileResponse>> rejectDriver(
             @RequestParam Long driverId) {
         DriverProfileResponse response = driverProfileService.rejectDriver(driverId);
         return ResponseEntity.ok(ApiResponse.success("Driver rejected successfully", response));
     }
 }
+

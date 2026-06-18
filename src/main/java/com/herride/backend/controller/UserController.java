@@ -32,7 +32,7 @@ public class UserController {
     private EntityManager entityManager;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') and principal.username == 'anshptk949@gmail.com'")
+    @PreAuthorize("hasRole('ADMIN') and principal.username == 'admin@herride.com'")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
         List<UserResponse> response = userRepository.findAll().stream()
                 .filter(u -> u.getRole() == Role.RIDER)
@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') and principal.username == 'anshptk949@gmail.com'")
+    @PreAuthorize("hasRole('ADMIN') and principal.username == 'admin@herride.com'")
     @Transactional
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         User user = userRepository.findById(id)
@@ -120,4 +120,5 @@ public class UserController {
                 .build();
     }
 }
+
 

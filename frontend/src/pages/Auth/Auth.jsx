@@ -51,8 +51,8 @@ export default function Auth() {
   const [gender, setGender] = useState('FEMALE'); // Restrict to Female
 
   // Admin login details
-  const [adminEmail, setAdminEmail] = useState('');
-  const [adminPassword, setAdminPassword] = useState('');
+  const [adminEmail, setAdminEmail] = useState('admin@herride.com');
+  const [adminPassword, setAdminPassword] = useState('admin123');
   const [showPass, setShowPass] = useState(false);
 
   // UI status states
@@ -180,7 +180,7 @@ export default function Auth() {
       setErrorMsg('Please enter your administrator credentials.');
       return;
     }
-    if (adminEmail !== 'anshptk949@gmail.com') {
+    if (adminEmail !== 'admin@herride.com') {
       setErrorMsg('Access Denied. Only designated system administrator can login here.');
       return;
     }
@@ -343,7 +343,7 @@ export default function Auth() {
                       onClick={() => setShowCodeDropdown(!showCodeDropdown)}
                       className="h-11 px-3 bg-slate-50 border border-brandBorder rounded-2xl text-xs font-bold text-slate-700 flex items-center gap-1"
                     >
-                      <span>🇮🇳 {countryCode}</span>
+                      <span>ðŸ‡®ðŸ‡³ {countryCode}</span>
                       <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                     </button>
                     {showCodeDropdown && (
@@ -353,7 +353,7 @@ export default function Auth() {
                           onClick={() => { setCountryCode('+91'); setShowCodeDropdown(false); }}
                           className="w-full text-left px-3 py-2 hover:bg-slate-50"
                         >
-                          🇮🇳 +91 (IN)
+                          ðŸ‡®ðŸ‡³ +91 (IN)
                         </button>
                       </div>
                     )}
@@ -505,7 +505,7 @@ export default function Auth() {
 
             {devOtp && (
               <div className="bg-primary/5 border border-primary/20 rounded-xl p-2.5 text-center text-[10px] font-bold text-primary max-w-xs mx-auto">
-                ⚡ Development Testing OTP: <span className="underline font-mono text-xs">{devOtp}</span>
+                âš¡ Development Testing OTP: <span className="underline font-mono text-xs">{devOtp}</span>
               </div>
             )}
 
@@ -563,7 +563,7 @@ export default function Auth() {
                 type="email"
                 value={adminEmail}
                 onChange={(e) => setAdminEmail(e.target.value)}
-                placeholder="anshptk949@gmail.com"
+                placeholder="admin@herride.com"
                 iconBefore={<Mail className="w-4 h-4 text-slate-400" />}
                 required
               />
@@ -574,7 +574,7 @@ export default function Auth() {
                 type={showPass ? 'text' : 'password'}
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
-                placeholder="••••••"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢"
                 iconBefore={<Lock className="w-4 h-4 text-slate-400" />}
                 iconAfter={
                   <button type="button" onClick={() => setShowPass(!showPass)}>
@@ -595,3 +595,4 @@ export default function Auth() {
     </div>
   );
 }
+

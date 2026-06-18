@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useHerRideStore } from '../../store/useHerRideStore';
 import { 
@@ -59,7 +59,7 @@ export default function Shell({ children }) {
   };
 
   if (user?.role === 'ADMIN' || location.pathname.startsWith('/admin')) {
-    if (user?.email !== 'anshptk949@gmail.com') {
+    if (user?.email !== 'admin@herride.com') {
       return (
         <div className="w-full min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white p-6 font-sans select-none">
           <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
@@ -155,10 +155,10 @@ export default function Shell({ children }) {
             {/* Switch role box */}
             <div className="pt-5 border-t border-slate-800">
               <span className="text-[8px] font-extrabold text-slate-500 uppercase tracking-widest block mb-2">Dev Role Switcher</span>
-              <div className={`grid ${user?.email === 'anshptk949@gmail.com' ? 'grid-cols-3' : 'grid-cols-2'} gap-1 bg-slate-950/50 border border-slate-800 p-1 rounded-xl text-[9px] font-extrabold text-center`}>
+              <div className={`grid ${user?.email === 'admin@herride.com' ? 'grid-cols-3' : 'grid-cols-2'} gap-1 bg-slate-950/50 border border-slate-800 p-1 rounded-xl text-[9px] font-extrabold text-center`}>
                 <button onClick={() => handleRoleChange('RIDER')} className="py-1 rounded-lg text-slate-400 hover:text-white">Rider</button>
                 <button onClick={() => handleRoleChange('DRIVER')} className="py-1 rounded-lg text-slate-400 hover:text-white">Driver</button>
-                {user?.email === 'anshptk949@gmail.com' && (
+                {user?.email === 'admin@herride.com' && (
                   <button onClick={() => handleRoleChange('ADMIN')} className="py-1 rounded-lg bg-accent text-white shadow">Admin</button>
                 )}
               </div>
@@ -473,10 +473,10 @@ export default function Shell({ children }) {
                 {/* Collapsible Switch Roles (Collapsable Dev Hub inside Drawer) */}
                 <div className="pt-4 border-t border-brandBorder/40">
                   <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest block mb-2">Simulation Role Switcher</span>
-                  <div className={`grid ${user?.email === 'anshptk949@gmail.com' ? 'grid-cols-3' : 'grid-cols-2'} gap-1 bg-slate-50 border border-brandBorder rounded-xl p-1 text-[9px] font-bold text-center`}>
+                  <div className={`grid ${user?.email === 'admin@herride.com' ? 'grid-cols-3' : 'grid-cols-2'} gap-1 bg-slate-50 border border-brandBorder rounded-xl p-1 text-[9px] font-bold text-center`}>
                     <button onClick={() => handleRoleChange('RIDER')} className={`py-1 rounded-lg ${user?.role === 'RIDER' ? 'bg-primary text-white' : 'text-slate-500'}`}>Rider</button>
                     <button onClick={() => handleRoleChange('DRIVER')} className={`py-1 rounded-lg ${user?.role === 'DRIVER' ? 'bg-secondary text-white' : 'text-slate-500'}`}>Driver</button>
-                    {user?.email === 'anshptk949@gmail.com' && (
+                    {user?.email === 'admin@herride.com' && (
                       <button onClick={() => handleRoleChange('ADMIN')} className={`py-1 rounded-lg ${user?.role === 'ADMIN' ? 'bg-accent text-white' : 'text-slate-500'}`}>Admin</button>
                     )}
                   </div>
@@ -508,3 +508,4 @@ export default function Shell({ children }) {
     </div>
   );
 }
+

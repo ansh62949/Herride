@@ -107,7 +107,7 @@ public class SafetyServiceImpl implements SafetyService {
     public List<SosAlertResponse> getSosHistory(String email) {
         User user = getUser(email);
         List<SosAlert> alerts;
-        if ("anshptk949@gmail.com".equals(user.getEmail())) {
+        if ("admin@herride.com".equals(user.getEmail())) {
             alerts = sosAlertRepository.findAllByOrderByCreatedAtDesc();
         } else {
             alerts = sosAlertRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
@@ -122,7 +122,7 @@ public class SafetyServiceImpl implements SafetyService {
                 .orElseThrow(() -> new AppException("SOS alert not found", HttpStatus.NOT_FOUND));
 
         User user = getUser(email);
-        boolean isAdmin = "anshptk949@gmail.com".equals(user.getEmail());
+        boolean isAdmin = "admin@herride.com".equals(user.getEmail());
         boolean isOwner = alert.getUser().getId().equals(user.getId());
 
         if (!isAdmin && !isOwner) {
@@ -189,7 +189,7 @@ public class SafetyServiceImpl implements SafetyService {
     public List<IncidentReportResponse> getIncidents(String email) {
         User user = getUser(email);
         List<IncidentReport> reports;
-        if ("anshptk949@gmail.com".equals(user.getEmail())) {
+        if ("admin@herride.com".equals(user.getEmail())) {
             reports = incidentReportRepository.findAllByOrderByCreatedAtDesc();
         } else {
             reports = incidentReportRepository.findByReporterIdOrderByCreatedAtDesc(user.getId());
@@ -495,4 +495,5 @@ public class SafetyServiceImpl implements SafetyService {
                 .build();
     }
 }
+
 

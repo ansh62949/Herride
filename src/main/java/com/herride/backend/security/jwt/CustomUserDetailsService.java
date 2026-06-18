@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return userRepository.findByEmail(email)
                 .map(user -> {
                     List<SimpleGrantedAuthority> authorities;
-                    if ("anshptk949@gmail.com".equals(user.getEmail())) {
+                    if ("admin@herride.com".equals(user.getEmail())) {
                         authorities = List.of(
                                 new SimpleGrantedAuthority("ROLE_ADMIN"),
                                 new SimpleGrantedAuthority("ROLE_DRIVER"),
@@ -39,3 +39,4 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
 }
+

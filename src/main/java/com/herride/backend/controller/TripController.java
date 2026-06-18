@@ -108,7 +108,7 @@ public class TripController {
      }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') and principal.username == 'anshptk949@gmail.com'")
+    @PreAuthorize("hasRole('ADMIN') and principal.username == 'admin@herride.com'")
     public ResponseEntity<ApiResponse<List<TripResponse>>> getAllTrips() {
         List<TripResponse> trips = tripService.getAllTrips();
         return ResponseEntity.ok(ApiResponse.success(trips.size() + " trip(s) found", trips));
@@ -121,3 +121,4 @@ public class TripController {
         return ResponseEntity.ok(ApiResponse.success("Chat history retrieved", history));
     }
 }
+

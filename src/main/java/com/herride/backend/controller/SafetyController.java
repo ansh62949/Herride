@@ -72,7 +72,7 @@ public class SafetyController {
 
     @PostMapping("/incident/{id}/resolve")
     @
-            PreAuthorize("hasRole('ADMIN') and principal.username == 'anshptk949@gmail.com'")
+            PreAuthorize("hasRole('ADMIN') and principal.username == 'admin@herride.com'")
     public ResponseEntity<ApiResponse<Void>> resolveIncident(@PathVariable Long id) {
         safetyService.resolveIncident(id);
         return ResponseEntity.ok(ApiResponse.success("Incident report resolved successfully", null));
@@ -124,4 +124,5 @@ public class SafetyController {
         return ResponseEntity.ok(ApiResponse.success("Response recorded successfully", null));
     }
 }
+
 

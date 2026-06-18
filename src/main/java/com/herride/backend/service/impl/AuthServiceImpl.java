@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
             }
             
             String roleClaim = user.getRole().name();
-            if ("anshptk949@gmail.com".equals(user.getEmail())) {
+            if ("admin@herride.com".equals(user.getEmail())) {
                 roleClaim = "ADMIN";
             }
             String accessToken = jwtUtil.generateAccessToken(user.getEmail(), roleClaim);
@@ -109,9 +109,9 @@ public class AuthServiceImpl implements AuthService {
                 throw new AppException("Only female passengers and verified female drivers are permitted on HerRide", HttpStatus.BAD_REQUEST);
             }
             
-            // Restrict ADMIN registration to only anshptk949@gmail.com
+            // Restrict ADMIN registration to only admin@herride.com
             if (role == com.herride.backend.model.enums.Role.ADMIN && 
-                !"anshptk949@gmail.com".equals(request.getEmail())) {
+                !"admin@herride.com".equals(request.getEmail())) {
                 throw new AppException("Only the designated system administrator is authorized to register with the ADMIN role", HttpStatus.FORBIDDEN);
             }
             
@@ -156,9 +156,9 @@ public class AuthServiceImpl implements AuthService {
             throw new AppException("Only female passengers and verified female drivers are permitted on HerRide", HttpStatus.BAD_REQUEST);
         }
 
-        // Restrict ADMIN registration to only anshptk949@gmail.com
+        // Restrict ADMIN registration to only admin@herride.com
         if (request.getRole() == com.herride.backend.model.enums.Role.ADMIN && 
-            !"anshptk949@gmail.com".equals(request.getEmail())) {
+            !"admin@herride.com".equals(request.getEmail())) {
             throw new AppException("Only the designated system administrator is authorized to register with the ADMIN role", HttpStatus.FORBIDDEN);
         }
 
@@ -197,7 +197,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String roleClaim = user.getRole().name();
-        if ("anshptk949@gmail.com".equals(user.getEmail())) {
+        if ("admin@herride.com".equals(user.getEmail())) {
             roleClaim = "ADMIN";
         }
         String accessToken = jwtUtil.generateAccessToken(user.getEmail(), roleClaim);
@@ -249,3 +249,4 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 }
+

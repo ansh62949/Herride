@@ -1,4 +1,4 @@
-﻿package com.herride.backend.service.impl;
+package com.herride.backend.service.impl;
 
 import com.herride.backend.exception.AppException;
 import com.herride.backend.kafka.producer.TripEventProducer;
@@ -25,13 +25,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.Duration;
-import org.springframework.scheduling.annotation.Scheduled;
 import java.util.List;
+import org.springframework.scheduling.annotation.Scheduled;
+import java.util.concurrent.CompletableFuture;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TripServiceImpl implements TripService {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     private final TripRepository tripRepository;
     private final UserRepository userRepository;
@@ -375,14 +381,30 @@ public class TripServiceImpl implements TripService {
             }
         }
 
+        if (bestDriver == null) {
+            log.info("No nearby driver found. Falling back to default driver@herride.com");
+            User fallbackDriver = userRepository.findByEmail("driver@herride.com").orElse(null);
+            if (fallbackDriver != null) {
+                bestDriver = driverProfileRepository.findByUserId(fallbackDriver.getId()).orElse(null);
+            }
+        }
+
         if (bestDriver != null) {
-            // Set driver candidate, but do not set status to DRIVER_ASSIGNED or set driver status to ON_TRIP.
-            // Status remains SEARCHING_DRIVER so that the driver is requested and must explicitly accept.
-            trip.setDriver(bestDriver.getUser());
+            User driverUser = bestDriver.getUser();
+            trip.setDriver(driverUser);
+            trip.setStatus(TripStatus.DRIVER_ASSIGNED);
+            trip.setAcceptedAt(LocalDateTime.now());
+
+            bestDriver.setDriverStatus(DriverStatus.ON_TRIP);
+            driverProfileRepository.save(bestDriver);
+
             tripRepository.save(trip);
-            log.info("Smart proposed candidate driver {} for trip {}", bestDriver.getUser().getEmail(), trip.getId());
+            tripEventProducer.publishTripAccepted(toResponse(trip));
+            log.info("Trip {} automatically accepted by driver {}", trip.getId(), driverUser.getEmail());
+
+            startAutomaticTripSimulation(trip.getId(), driverUser.getEmail());
         } else {
-            log.warn("No suitable driver found for trip {}", trip.getId());
+            log.warn("No suitable driver found (even fallback) for trip {}", trip.getId());
         }
     }
 
@@ -591,5 +613,41 @@ public class TripServiceImpl implements TripService {
                 .distanceKm(trip.getDistanceKm())
                 .etaMinutes(eta)
                 .build();
+    }
+
+    private void startAutomaticTripSimulation(Long tripId, String driverEmail) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                // Step 1: DRIVER_ARRIVING after 3.5 seconds
+                Thread.sleep(3500);
+                log.info("Auto-simulation: Transitioning trip {} to DRIVER_ARRIVING", tripId);
+                getApplicationContextSelf().updateTripStatus(driverEmail, tripId, "ARRIVING");
+
+                // Step 2: RIDER_PICKED after another 3.5 seconds
+                Thread.sleep(3500);
+                log.info("Auto-simulation: Transitioning trip {} to RIDER_PICKED", tripId);
+                getApplicationContextSelf().updateTripStatus(driverEmail, tripId, "ARRIVED");
+
+                // Step 3: IN_PROGRESS after another 3.5 seconds
+                Thread.sleep(3500);
+                log.info("Auto-simulation: Transitioning trip {} to IN_PROGRESS", tripId);
+                getApplicationContextSelf().updateTripStatus(driverEmail, tripId, "START");
+
+                // Step 4: COMPLETED after another 3.5 seconds
+                Thread.sleep(3500);
+                log.info("Auto-simulation: Transitioning trip {} to COMPLETED", tripId);
+                getApplicationContextSelf().updateTripStatus(driverEmail, tripId, "COMPLETE");
+
+            } catch (InterruptedException e) {
+                log.error("Automatic trip simulation interrupted for trip {}", tripId, e);
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                log.error("Error running automatic trip simulation for trip {}", tripId, e);
+            }
+        });
+    }
+
+    private TripService getApplicationContextSelf() {
+        return applicationContext.getBean(TripService.class);
     }
 }

@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 import api from '../services/api';
 import websocketService from '../services/websocket';
 
@@ -18,11 +18,11 @@ export const useHerRideStore = create((set, get) => ({
   destination: 'IGI Airport Terminal 3, New Delhi',
   selectedRideType: 'bike', // bike, auto, mini, sedan, suv
   rideTypes: [
-    { id: 'bike', name: 'Bike', price: '₹120.00', eta: '2 mins', desc: 'Quick solo bike commutes' },
-    { id: 'auto', name: 'Auto Rickshaw', price: '₹180.00', eta: '3 mins', desc: 'Spacious three-wheelers' },
-    { id: 'mini', name: 'Mini (WagonR)', price: '₹240.00', eta: '4 mins', desc: 'Economy hatchback rides' },
-    { id: 'sedan', name: 'Sedan (Swift Dzire)', price: '₹350.00', eta: '4 mins', desc: 'Premium comfort sedan' },
-    { id: 'suv', name: 'SUV (Ertiga/Innova)', price: '₹550.00', eta: '5 mins', desc: 'Spacious family SUV' }
+    { id: 'bike', name: 'Bike', price: 'â‚¹120.00', eta: '2 mins', desc: 'Quick solo bike commutes' },
+    { id: 'auto', name: 'Auto Rickshaw', price: 'â‚¹180.00', eta: '3 mins', desc: 'Spacious three-wheelers' },
+    { id: 'mini', name: 'Mini (WagonR)', price: 'â‚¹240.00', eta: '4 mins', desc: 'Economy hatchback rides' },
+    { id: 'sedan', name: 'Sedan (Swift Dzire)', price: 'â‚¹350.00', eta: '4 mins', desc: 'Premium comfort sedan' },
+    { id: 'suv', name: 'SUV (Ertiga/Innova)', price: 'â‚¹550.00', eta: '5 mins', desc: 'Spacious family SUV' }
   ],
   nearbyDrivers: [],
   tripHistory: [],
@@ -62,7 +62,7 @@ export const useHerRideStore = create((set, get) => ({
   
   setRole: (role) => {
     set((state) => {
-      if (role === 'ADMIN' && state.user?.email !== 'anshptk949@gmail.com') {
+      if (role === 'ADMIN' && state.user?.email !== 'admin@herride.com') {
         return {};
       }
       const updated = { ...state.user, role };
@@ -83,13 +83,13 @@ export const useHerRideStore = create((set, get) => ({
 
   login: async (email, password, role) => {
     try {
-      if (role === 'ADMIN' && email !== 'anshptk949@gmail.com') {
+      if (role === 'ADMIN' && email !== 'admin@herride.com') {
         throw new Error('Access denied. Only authorized administrators can log in with the ADMIN role.');
       }
       const response = await api.post('/auth/login', { email, password, role });
       if (response.data && response.data.success) {
         const authData = response.data.data;
-        if (authData.role === 'ADMIN' && authData.email !== 'anshptk949@gmail.com') {
+        if (authData.role === 'ADMIN' && authData.email !== 'admin@herride.com') {
           throw new Error('Access denied. Only authorized administrators can access the ADMIN interface.');
         }
         
@@ -102,7 +102,7 @@ export const useHerRideStore = create((set, get) => ({
           email: authData.email,
           phone: authData.phone,
           gender: authData.gender,
-          role: (authData.email === 'anshptk949@gmail.com' && role === 'ADMIN') ? 'ADMIN' : authData.role
+          role: (authData.email === 'admin@herride.com' && role === 'ADMIN') ? 'ADMIN' : authData.role
         };
         
         localStorage.setItem('user', JSON.stringify(userObj));
@@ -251,7 +251,7 @@ export const useHerRideStore = create((set, get) => ({
             params: { pickupLat, pickupLng, destLat, destLng, vehicleType: backendType }
           });
           if (res.data && res.data.success) {
-            return `₹${res.data.data.estimatedFare.toFixed(2)}`;
+            return `â‚¹${res.data.data.estimatedFare.toFixed(2)}`;
           }
         } catch (e) {
           console.warn('Fare estimate unavailable for ' + backendType);
@@ -376,7 +376,7 @@ export const useHerRideStore = create((set, get) => ({
           id: t.id,
           status: t.status,
           date: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : 'N/A',
-          fare: t.actualFare ? `₹${t.actualFare.toFixed(2)}` : t.estimatedFare ? `₹${t.estimatedFare.toFixed(2)}` : 'N/A',
+          fare: t.actualFare ? `â‚¹${t.actualFare.toFixed(2)}` : t.estimatedFare ? `â‚¹${t.estimatedFare.toFixed(2)}` : 'N/A',
           pickup: t.pickupAddress,
           destination: t.destinationAddress,
           driver: t.driverName || 'No driver assigned',
@@ -592,8 +592,8 @@ export const useHerRideStore = create((set, get) => ({
             pickup: t.pickupAddress,
             destination: t.destinationAddress,
             vehicleType: t.vehicleType,
-            fare: `₹${(t.actualFare || t.estimatedFare || 0).toFixed(2)}`,
-            driverEarnings: t.driverEarnings ? `₹${t.driverEarnings.toFixed(2)}` : '₹0.00',
+            fare: `â‚¹${(t.actualFare || t.estimatedFare || 0).toFixed(2)}`,
+            driverEarnings: t.driverEarnings ? `â‚¹${t.driverEarnings.toFixed(2)}` : 'â‚¹0.00',
             status: t.status,
             date: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : 'N/A'
           }))
@@ -932,7 +932,7 @@ export const useHerRideStore = create((set, get) => ({
       });
 
       // Admin real-time SOS subscription
-      if (user.email === 'anshptk949@gmail.com') {
+      if (user.email === 'admin@herride.com') {
         websocketService.subscribe('/topic/admin/sos', (payload) => {
           if (!payload) return;
           const mappedAlert = {
@@ -962,7 +962,7 @@ export const useHerRideStore = create((set, get) => ({
             riderRating: payload.riderRating || 4.8,
             pickup: payload.pickupAddress,
             destination: payload.destinationAddress,
-            fare: `₹${(payload.actualFare || payload.estimatedFare || 0).toFixed(2)}`,
+            fare: `â‚¹${(payload.actualFare || payload.estimatedFare || 0).toFixed(2)}`,
             eta: '3 mins'
           };
           set({ incomingRideRequest: mappedRequest });
@@ -1003,7 +1003,7 @@ export const useHerRideStore = create((set, get) => ({
       destLng: t.destinationLongitude,
       rideType: t.vehicleType,
       vehicleType: t.vehicleType?.toLowerCase() === 'tricycle' ? 'auto' : t.vehicleType?.toLowerCase() === 'bike' ? 'bike' : t.vehicleType?.toLowerCase() === 'van' ? 'mini' : t.vehicleType?.toLowerCase() === 'suv' ? 'suv' : 'sedan',
-      fare: `₹${(t.actualFare || t.estimatedFare || t.fare || 0).toFixed(2)}`,
+      fare: `â‚¹${(t.actualFare || t.estimatedFare || t.fare || 0).toFixed(2)}`,
       driver: t.driverName ? {
         name: t.driverName,
         photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150',
@@ -1072,3 +1072,4 @@ if (initialToken) {
     useHerRideStore.getState().initWebSocket();
   }, 1000);
 }
+
