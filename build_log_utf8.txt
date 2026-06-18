@@ -1,0 +1,8 @@
+﻿cmd.exe : 'C:\Program' is not recognized as an internal or external command,
+At line:1 char:1
++ cmd.exe /c ""C:\Program Files\JetBrains\IntelliJ IDEA 2025.3.2\plugin ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('C:\Program' is...ternal command,:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+operable program or batch file.
