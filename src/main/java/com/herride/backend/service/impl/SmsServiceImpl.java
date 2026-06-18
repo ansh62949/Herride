@@ -1,4 +1,4 @@
-﻿package com.herride.backend.service.impl;
+package com.herride.backend.service.impl;
 
 import com.herride.backend.config.TermiiConfig;
 import com.herride.backend.model.dto.request.SmsRequest;

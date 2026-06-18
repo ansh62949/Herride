@@ -1,4 +1,4 @@
-﻿package com.herride.backend.websocket;
+package com.herride.backend.websocket;
 
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;

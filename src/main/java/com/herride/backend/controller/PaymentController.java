@@ -1,4 +1,4 @@
-﻿package com.herride.backend.controller;
+package com.herride.backend.controller;
 
 import com.herride.backend.model.dto.response.ApiResponse;
 import com.herride.backend.model.dto.response.PaymentResponse;

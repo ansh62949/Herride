@@ -1,4 +1,4 @@
-﻿package com.herride.backend.config;
+package com.herride.backend.config;
 
 import com.herride.backend.security.jwt.JwtUtil;
 import org.springframework.security.core.userdetails.UserDetailsService;

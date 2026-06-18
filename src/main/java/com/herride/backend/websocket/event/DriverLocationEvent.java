@@ -1,4 +1,4 @@
-﻿package com.herride.backend.websocket.event;
+package com.herride.backend.websocket.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

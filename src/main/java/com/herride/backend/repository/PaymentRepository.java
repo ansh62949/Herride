@@ -1,4 +1,4 @@
-﻿package com.herride.backend.repository;
+package com.herride.backend.repository;
 
 import com.herride.backend.model.entity.Payment;
 import com.herride.backend.model.enums.PaymentStatus;

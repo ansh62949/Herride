@@ -1,4 +1,4 @@
-﻿package com.herride.backend.repository;
+package com.herride.backend.repository;
 
 import com.herride.backend.model.entity.IncidentReport;
 import org.springframework.data.jpa.repository.JpaRepository;

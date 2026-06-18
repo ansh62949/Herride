@@ -1,4 +1,4 @@
-﻿package com.herride.backend.model.dto.request;
+package com.herride.backend.model.dto.request;
 
 import com.herride.backend.model.enums.CancellationReason;
 import jakarta.validation.constraints.NotNull;

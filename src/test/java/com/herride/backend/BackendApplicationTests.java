@@ -1,4 +1,4 @@
-﻿package com.herride.backend;
+package com.herride.backend;
 
 import org.junit.jupiter.api.Test;
 

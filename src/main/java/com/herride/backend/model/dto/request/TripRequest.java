@@ -1,4 +1,4 @@
-﻿package com.herride.backend.model.dto.request;
+package com.herride.backend.model.dto.request;
 
 import com.herride.backend.model.enums.RideType;
 import com.herride.backend.model.enums.VehicleType;

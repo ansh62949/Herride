@@ -1,4 +1,4 @@
-﻿package com.herride.backend.service;
+package com.herride.backend.service;
 
 import com.herride.backend.model.dto.request.LocationUpdateRequest;
 import com.herride.backend.model.dto.response.NearbyDriverResponse;

@@ -1,4 +1,4 @@
-﻿package com.herride.backend.model.dto.request;
+package com.herride.backend.model.dto.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

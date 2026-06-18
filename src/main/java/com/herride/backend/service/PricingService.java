@@ -1,4 +1,4 @@
-﻿package com.herride.backend.service;
+package com.herride.backend.service;
 
 import com.herride.backend.model.dto.response.FareEstimateResponse;
 import com.herride.backend.model.enums.VehicleType;

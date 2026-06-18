@@ -1,4 +1,4 @@
-﻿package com.herride.backend.websocket;
+package com.herride.backend.websocket;
 
 import com.herride.backend.model.dto.response.TripResponse;
 import com.herride.backend.repository.UserRepository;

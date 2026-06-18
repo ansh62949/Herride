@@ -1,4 +1,4 @@
-﻿package com.herride.backend.service;
+package com.herride.backend.service;
 
 import com.herride.backend.model.dto.request.IncidentReportRequest;
 import com.herride.backend.model.dto.request.SosAlertRequest;

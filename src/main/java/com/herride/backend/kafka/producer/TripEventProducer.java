@@ -1,4 +1,4 @@
-﻿package com.herride.backend.kafka.producer;
+package com.herride.backend.kafka.producer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

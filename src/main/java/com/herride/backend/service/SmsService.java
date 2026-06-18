@@ -1,4 +1,4 @@
-﻿package com.herride.backend.service;
+package com.herride.backend.service;
 
 public interface SmsService {
     void sendSms(String phoneNumber, String message);

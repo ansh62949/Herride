@@ -1,4 +1,4 @@
-﻿package com.herride.backend.websocket.event;
+package com.herride.backend.websocket.event;
 
 import com.herride.backend.model.enums.VehicleType;
 import lombok.AllArgsConstructor;

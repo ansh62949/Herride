@@ -1,4 +1,4 @@
-﻿package com.herride.backend.security;
+package com.herride.backend.security;
 
 import com.herride.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

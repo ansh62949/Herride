@@ -1,4 +1,4 @@
-﻿package com.herride.backend.config;
+package com.herride.backend.config;
 
 import com.herride.backend.security.jwt.JwtAuthFilter;
 import jakarta.servlet.http.HttpServletResponse;

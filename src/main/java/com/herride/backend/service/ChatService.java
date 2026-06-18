@@ -1,4 +1,4 @@
-﻿package com.herride.backend.service;
+package com.herride.backend.service;
 
 import com.herride.backend.websocket.event.ChatMessageEvent;
 import org.springframework.stereotype.Service;

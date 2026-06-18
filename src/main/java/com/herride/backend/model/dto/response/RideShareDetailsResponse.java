@@ -1,4 +1,4 @@
-﻿package com.herride.backend.model.dto.response;
+package com.herride.backend.model.dto.response;
 
 import com.herride.backend.model.enums.TripStatus;
 import lombok.Builder;

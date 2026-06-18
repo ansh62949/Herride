@@ -1,4 +1,4 @@
-﻿package com.herride.backend.exception;
+package com.herride.backend.exception;
 
 import com.herride.backend.model.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;

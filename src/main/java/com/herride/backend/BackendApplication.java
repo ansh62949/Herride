@@ -1,4 +1,4 @@
-﻿package com.herride.backend;
+package com.herride.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

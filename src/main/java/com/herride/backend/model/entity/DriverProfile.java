@@ -1,4 +1,4 @@
-﻿package com.herride.backend.model.entity;
+package com.herride.backend.model.entity;
 
 import com.herride.backend.model.enums.DriverStatus;
 import com.herride.backend.model.enums.VehicleType;

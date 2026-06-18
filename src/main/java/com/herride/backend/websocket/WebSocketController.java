@@ -1,4 +1,4 @@
-﻿package com.herride.backend.websocket;
+package com.herride.backend.websocket;
 
 import com.herride.backend.model.dto.request.LocationUpdateRequest;
 import com.herride.backend.service.DriverProfileService;

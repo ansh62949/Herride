@@ -1,4 +1,4 @@
-﻿package com.herride.backend.model.dto.response;
+package com.herride.backend.model.dto.response;
 
 import com.herride.backend.model.enums.Gender;
 import com.herride.backend.model.enums.Role;

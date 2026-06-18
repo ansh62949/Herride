@@ -1,4 +1,4 @@
-﻿package com.herride.backend.security.jwt;
+package com.herride.backend.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

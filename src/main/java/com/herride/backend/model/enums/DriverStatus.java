@@ -1,4 +1,4 @@
-﻿package com.herride.backend.model.enums;
+package com.herride.backend.model.enums;
 
 public enum DriverStatus {
     OFFLINE,

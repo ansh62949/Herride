@@ -1,4 +1,4 @@
-﻿package com.herride.backend.controller;
+package com.herride.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herride.backend.BaseIntegrationTest;

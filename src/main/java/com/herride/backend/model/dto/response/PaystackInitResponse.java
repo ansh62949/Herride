@@ -1,4 +1,4 @@
-﻿package com.herride.backend.model.dto.response;
+package com.herride.backend.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

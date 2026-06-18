@@ -1,4 +1,4 @@
-﻿package com.herride.backend.kafka.consumer;
+package com.herride.backend.kafka.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herride.backend.kafka.KafkaTopicConfig;

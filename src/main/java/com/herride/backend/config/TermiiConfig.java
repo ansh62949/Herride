@@ -1,4 +1,4 @@
-﻿package com.herride.backend.config;
+package com.herride.backend.config;
 
 import lombok.Getter;
 import lombok.Setter;

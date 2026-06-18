@@ -1,4 +1,4 @@
-﻿package com.herride.backend.config;
+package com.herride.backend.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.TopicPartition;

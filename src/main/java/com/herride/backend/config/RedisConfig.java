@@ -1,4 +1,4 @@
-﻿package com.herride.backend.config;
+package com.herride.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

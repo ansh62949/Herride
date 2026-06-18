@@ -1,4 +1,4 @@
-﻿package com.herride.backend.exception;
+package com.herride.backend.exception;
 
 import org.springframework.http.HttpStatus;
 import lombok.Getter;
