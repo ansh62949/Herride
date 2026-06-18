@@ -72,10 +72,23 @@ export default function Home() {
     setPaymentLoading(true);
     setPaymentError('');
     const paymentData = await initializePayment(currentTrip.id);
-    setPaymentLoading(false);
-    if (paymentData && paymentData.authorizationUrl) {
-      window.open(paymentData.authorizationUrl, '_blank');
+    if (paymentData) {
+      const isDemo = paymentData.reference && paymentData.reference.startsWith('demo-');
+      if (isDemo) {
+        setTimeout(async () => {
+          await verifyPayment(paymentData.reference);
+          setPaymentLoading(false);
+        }, 1500);
+        return;
+      }
+      setPaymentLoading(false);
+      if (paymentData.authorizationUrl) {
+        window.open(paymentData.authorizationUrl, '_blank');
+      } else {
+        setPaymentError('Failed to initialize payment gateway. Please try again.');
+      }
     } else {
+      setPaymentLoading(false);
       setPaymentError('Failed to initialize payment gateway. Please try again.');
     }
   };
