@@ -13,6 +13,10 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka-323b5f05-ansh62949-c765.j.aivencloud.com:17366}
+    properties:
+      security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
+      sasl.mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
+      sasl.jaas.config: ${KAFKA_JAAS_CONFIG}
 
 jwt:
   secret: ${JWT_SECRET}
