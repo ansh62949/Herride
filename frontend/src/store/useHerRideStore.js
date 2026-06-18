@@ -1,6 +1,8 @@
-﻿import { create } from 'zustand';
+import { create } from 'zustand';
 import api from '../services/api';
 import websocketService from '../services/websocket';
+
+const DEMO_MODE = true;
 
 // Load initial states from LocalStorage for persistence
 const initialUser = JSON.parse(localStorage.getItem('user') || 'null');
@@ -114,6 +116,21 @@ export const useHerRideStore = create((set, get) => ({
       }
     } catch (err) {
       console.error('Login error:', err);
+      if (DEMO_MODE) {
+        console.warn('Backend login failed or offline. Falling back to local Demo Mode.');
+        const userObj = {
+          id: role === 'ADMIN' ? 999 : (role === 'DRIVER' ? 888 : 777),
+          name: role === 'ADMIN' ? 'System Admin' : (role === 'DRIVER' ? 'Priya Sharma' : 'Ansh Pathak'),
+          email: email,
+          phone: role === 'ADMIN' ? '+919999999999' : '+919876543210',
+          gender: 'FEMALE',
+          role: role
+        };
+        localStorage.setItem('token', 'mock-token');
+        localStorage.setItem('user', JSON.stringify(userObj));
+        set({ isAuthenticated: true, user: userObj, token: 'mock-token' });
+        return true;
+      }
       throw err;
     }
     return false;
@@ -161,6 +178,10 @@ export const useHerRideStore = create((set, get) => ({
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
+      if (DEMO_MODE) {
+        console.warn('Backend OTP service offline. Falling back to local Demo Mode.');
+        return { registered: true, devOtp: '12345' };
+      }
       throw err;
     }
     return null;
@@ -193,6 +214,21 @@ export const useHerRideStore = create((set, get) => ({
       }
     } catch (err) {
       console.error('Error verifying OTP:', err);
+      if (DEMO_MODE) {
+        console.warn('Backend OTP verification offline. Falling back to local Demo Mode.');
+        const userObj = {
+          id: 777,
+          name: regDetails.firstName ? `${regDetails.firstName} ${regDetails.lastName}` : 'Ansh Pathak',
+          email: regDetails.email || 'user@herride.com',
+          phone: phone,
+          gender: 'FEMALE',
+          role: regDetails.role || 'RIDER'
+        };
+        localStorage.setItem('token', 'mock-token');
+        localStorage.setItem('user', JSON.stringify(userObj));
+        set({ isAuthenticated: true, user: userObj, token: 'mock-token' });
+        return true;
+      }
       throw err;
     }
     return false;
@@ -314,6 +350,61 @@ export const useHerRideStore = create((set, get) => ({
       }
     } catch (err) {
       console.error('Error booking ride:', err);
+      if (DEMO_MODE) {
+        console.warn('Backend booking offline. Falling back to local Demo Mode simulation.');
+        const mockTrip = {
+          id: Math.floor(Math.random() * 10000),
+          status: 'DRIVER_ASSIGNED',
+          paymentStatus: 'PENDING',
+          pickupAddress: pickup || 'Connaught Place, New Delhi',
+          destinationAddress: destination || 'IGI Airport Terminal 3, New Delhi',
+          pickupLatitude: pickupLat,
+          pickupLongitude: pickupLng,
+          destinationLatitude: destLat,
+          destinationLongitude: destLng,
+          vehicleType: backendType,
+          estimatedFare: 450.00,
+          distanceKm: 12.5,
+          driverName: 'Neha Singh',
+          driverPhone: '+919876500001',
+          driverRating: 4.95,
+          plateNumber: 'DL01AB5678',
+          vehicleModel: 'Swift Dzire',
+          vehicleColor: 'White',
+          driverLatitude: pickupLat + 0.005,
+          driverLongitude: pickupLng + 0.005
+        };
+        get().handleTripUpdate(mockTrip);
+
+        // Client-side auto simulation: every 3.5 seconds
+        let currentStep = 0;
+        const steps = [
+          { status: 'DRIVER_ARRIVING', progress: 40, latOffset: 0.003, lngOffset: 0.003 },
+          { status: 'RIDER_PICKED', progress: 60, latOffset: 0, lngOffset: 0 },
+          { status: 'IN_PROGRESS', progress: 80, latOffset: (destLat - pickupLat) / 2, lngOffset: (destLng - pickupLng) / 2 },
+          { status: 'COMPLETED', progress: 100, latOffset: destLat - pickupLat, lngOffset: destLng - pickupLng }
+        ];
+
+        const interval = setInterval(() => {
+          const trip = get().currentTrip;
+          if (!trip || trip.paymentStatus === 'PAID' || currentStep >= steps.length) {
+            clearInterval(interval);
+            return;
+          }
+          const step = steps[currentStep];
+          const updatedTrip = {
+            ...mockTrip,
+            status: step.status,
+            driverLatitude: pickupLat + step.latOffset,
+            driverLongitude: pickupLng + step.lngOffset,
+            actualFare: 450.00
+          };
+          get().handleTripUpdate(updatedTrip);
+          currentStep++;
+        }, 3500);
+
+        return true;
+      }
       if (err.response && err.response.status === 409) {
         get().loadTripHistory();
       }
@@ -376,7 +467,7 @@ export const useHerRideStore = create((set, get) => ({
           id: t.id,
           status: t.status,
           date: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : 'N/A',
-          fare: t.actualFare ? `â‚¹${t.actualFare.toFixed(2)}` : t.estimatedFare ? `â‚¹${t.estimatedFare.toFixed(2)}` : 'N/A',
+          fare: t.actualFare ? `₹${t.actualFare.toFixed(2)}` : t.estimatedFare ? `₹${t.estimatedFare.toFixed(2)}` : 'N/A',
           pickup: t.pickupAddress,
           destination: t.destinationAddress,
           driver: t.driverName || 'No driver assigned',
@@ -392,6 +483,14 @@ export const useHerRideStore = create((set, get) => ({
       }
     } catch (err) {
       console.error('Error loading trip history:', err);
+      if (DEMO_MODE) {
+        set({
+          tripHistory: [
+            { id: 101, status: 'COMPLETED', date: '6/18/2026', fare: '₹450.00', pickup: 'Connaught Place, New Delhi', destination: 'IGI Airport Terminal 3, New Delhi', driver: 'Neha Singh', distance: '12.5 km' },
+            { id: 102, status: 'COMPLETED', date: '6/17/2026', fare: '₹220.00', pickup: 'Saket Metro Station, New Delhi', destination: 'Select Citywalk, New Delhi', driver: 'Ananya Roy', distance: '3.2 km' }
+          ]
+        });
+      }
     }
   },
 
@@ -592,12 +691,38 @@ export const useHerRideStore = create((set, get) => ({
             pickup: t.pickupAddress,
             destination: t.destinationAddress,
             vehicleType: t.vehicleType,
-            fare: `â‚¹${(t.actualFare || t.estimatedFare || 0).toFixed(2)}`,
-            driverEarnings: t.driverEarnings ? `â‚¹${t.driverEarnings.toFixed(2)}` : 'â‚¹0.00',
+            fare: `₹${(t.actualFare || t.estimatedFare || 0).toFixed(2)}`,
+            driverEarnings: t.driverEarnings ? `₹${t.driverEarnings.toFixed(2)}` : '₹0.00',
             status: t.status,
             date: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : 'N/A'
           }))
         : [];
+
+      if (DEMO_MODE && (drivers.length === 0 || users.length === 0)) {
+        set({
+          allDrivers: [
+            { id: 888, name: 'Priya Sharma', car: 'Maruti Suzuki Swift Dzire', licensePlate: 'DL01AB1234', isVerified: 'APPROVED', earnings: 4500.00, status: 'ONLINE', rating: 4.95 },
+            { id: 889, name: 'Ananya Roy', car: 'Hyundai i10', licensePlate: 'DL02CD5678', isVerified: 'APPROVED', earnings: 2800.00, status: 'ON_TRIP', rating: 4.8 },
+            { id: 890, name: 'Kiran Patel', car: 'Maruti WagonR', licensePlate: 'DL03EF9012', isVerified: 'PENDING', earnings: 0.00, status: 'OFFLINE', rating: 5.0 }
+          ],
+          allUsers: [
+            { id: 777, name: 'Neha Singh', email: 'neha@test.com', phone: '+919999988888', gender: 'FEMALE', status: 'ACTIVE', totalRides: 15, totalSpent: 4500.00 },
+            { id: 778, name: 'Aisha Khan', email: 'aisha@test.com', phone: '+919999977777', gender: 'FEMALE', status: 'ACTIVE', totalRides: 8, totalSpent: 2200.00 }
+          ],
+          adminSosAlerts: [
+            { id: 1, tripId: '102', user: 'Aisha Khan', phone: '+919999977777', location: '28.6139, 77.2090', time: '10:30 PM', status: 'RESOLVED', lat: 28.6139, lng: 77.2090 },
+            { id: 2, tripId: '105', user: 'Neha Singh', phone: '+919999988888', location: '28.5562, 77.1000', time: '11:15 PM', status: 'ACTIVE', lat: 28.5562, lng: 77.1000 }
+          ],
+          incidentReports: [
+            { id: 1, category: 'Unsafe Driving', description: 'Driver was speeding slightly.', status: 'RESOLVED', date: '6/18/2026', user: 'Aisha Khan', driver: 'Ananya Roy' }
+          ],
+          allTrips: [
+            { id: 101, riderName: 'Neha Singh', driverName: 'Priya Sharma', pickup: 'Connaught Place, New Delhi', destination: 'IGI Airport Terminal 3, New Delhi', vehicleType: 'SEDAN', fare: '₹450.00', driverEarnings: '₹360.00', status: 'COMPLETED', date: '6/18/2026' },
+            { id: 102, riderName: 'Aisha Khan', driverName: 'Ananya Roy', pickup: 'Saket Metro Station, New Delhi', destination: 'Select Citywalk, New Delhi', vehicleType: 'SEDAN', fare: '₹220.00', driverEarnings: '₹176.00', status: 'COMPLETED', date: '6/17/2026' }
+          ]
+        });
+        return;
+      }
 
       set({
         allDrivers: drivers,
@@ -779,6 +904,12 @@ export const useHerRideStore = create((set, get) => ({
     } catch (err) {
       console.error('Error initializing payment:', err);
     }
+    if (DEMO_MODE) {
+      return {
+        authorizationUrl: `${window.location.origin}/payment-sandbox?reference=demo-${tripId}&amount=450.00`,
+        reference: `demo-${tripId}`
+      };
+    }
     return null;
   },
 
@@ -791,6 +922,18 @@ export const useHerRideStore = create((set, get) => ({
       }
     } catch (err) {
       console.error('Error verifying payment:', err);
+    }
+    if (DEMO_MODE) {
+      const currentTrip = get().currentTrip;
+      if (currentTrip) {
+        set({
+          currentTrip: {
+            ...currentTrip,
+            paymentStatus: 'PAID'
+          }
+        });
+      }
+      return { status: 'success' };
     }
     return null;
   },
