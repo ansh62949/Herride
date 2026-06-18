@@ -698,31 +698,7 @@ export const useHerRideStore = create((set, get) => ({
           }))
         : [];
 
-      if (DEMO_MODE && (drivers.length === 0 || users.length === 0)) {
-        set({
-          allDrivers: [
-            { id: 888, name: 'Priya Sharma', car: 'Maruti Suzuki Swift Dzire', licensePlate: 'DL01AB1234', isVerified: 'APPROVED', earnings: 4500.00, status: 'ONLINE', rating: 4.95 },
-            { id: 889, name: 'Ananya Roy', car: 'Hyundai i10', licensePlate: 'DL02CD5678', isVerified: 'APPROVED', earnings: 2800.00, status: 'ON_TRIP', rating: 4.8 },
-            { id: 890, name: 'Kiran Patel', car: 'Maruti WagonR', licensePlate: 'DL03EF9012', isVerified: 'PENDING', earnings: 0.00, status: 'OFFLINE', rating: 5.0 }
-          ],
-          allUsers: [
-            { id: 777, name: 'Neha Singh', email: 'neha@test.com', phone: '+919999988888', gender: 'FEMALE', status: 'ACTIVE', totalRides: 15, totalSpent: 4500.00 },
-            { id: 778, name: 'Aisha Khan', email: 'aisha@test.com', phone: '+919999977777', gender: 'FEMALE', status: 'ACTIVE', totalRides: 8, totalSpent: 2200.00 }
-          ],
-          adminSosAlerts: [
-            { id: 1, tripId: '102', user: 'Aisha Khan', phone: '+919999977777', location: '28.6139, 77.2090', time: '10:30 PM', status: 'RESOLVED', lat: 28.6139, lng: 77.2090 },
-            { id: 2, tripId: '105', user: 'Neha Singh', phone: '+919999988888', location: '28.5562, 77.1000', time: '11:15 PM', status: 'ACTIVE', lat: 28.5562, lng: 77.1000 }
-          ],
-          incidentReports: [
-            { id: 1, category: 'Unsafe Driving', description: 'Driver was speeding slightly.', status: 'RESOLVED', date: '6/18/2026', user: 'Aisha Khan', driver: 'Ananya Roy' }
-          ],
-          allTrips: [
-            { id: 101, riderName: 'Neha Singh', driverName: 'Priya Sharma', pickup: 'Connaught Place, New Delhi', destination: 'IGI Airport Terminal 3, New Delhi', vehicleType: 'SEDAN', fare: '₹450.00', driverEarnings: '₹360.00', status: 'COMPLETED', date: '6/18/2026' },
-            { id: 102, riderName: 'Aisha Khan', driverName: 'Ananya Roy', pickup: 'Saket Metro Station, New Delhi', destination: 'Select Citywalk, New Delhi', vehicleType: 'SEDAN', fare: '₹220.00', driverEarnings: '₹176.00', status: 'COMPLETED', date: '6/17/2026' }
-          ]
-        });
-        return;
-      }
+
 
       set({
         allDrivers: drivers,
