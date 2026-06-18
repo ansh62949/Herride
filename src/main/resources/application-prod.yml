@@ -12,7 +12,7 @@ spring:
       password: ${REDIS_PASSWORD}
 
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:${KAFKA_SERVERS}}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
 jwt:
   secret: ${JWT_SECRET}
