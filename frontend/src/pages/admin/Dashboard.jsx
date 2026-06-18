@@ -141,7 +141,7 @@ export default function Dashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="99%" height={240}>
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorRides" x1="0" y1="0" x2="0" y2="1">
@@ -165,7 +165,7 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-bold">SOS Alarms Scraped</CardTitle>
           </CardHeader>
           <CardContent className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="99%" height={240}>
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis dataKey="name" stroke="#94A3B8" fontSize={10} tickLine={false} />
