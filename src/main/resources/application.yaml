@@ -34,6 +34,7 @@ spring:
       security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
       sasl.mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
       sasl.jaas.config: ${KAFKA_JAAS_CONFIG}
+      ssl.engine.factory.class: com.herride.backend.config.TrustAllSslEngineFactory
     consumer:
       group-id: HerRide-group
       auto-offset-reset: earliest
