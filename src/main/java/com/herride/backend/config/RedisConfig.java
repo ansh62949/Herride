@@ -1,13 +1,16 @@
 package com.herride.backend.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import java.net.URI;
 
 @Configuration
 public class RedisConfig {
@@ -15,8 +18,62 @@ public class RedisConfig {
     @Value("${spring.data.redis.host:localhost}")
     private String redisHost;
 
-    @Value("${spring.data.redis.url:}")
-    private String redisUrl;
+    @Value("${spring.data.redis.port:6379}")
+    private int redisPort;
+
+    @Value("${spring.data.redis.password:}")
+    private String redisPassword;
+
+    @Value("${REDIS_URL:}")
+    private String redisUrlEnv;
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration config;
+        boolean useSsl = false;
+        String host = redisHost;
+        int port = redisPort;
+        String password = redisPassword;
+
+        if (redisUrlEnv != null && !redisUrlEnv.isEmpty()) {
+            System.out.println("[RedisConfig] Configuring Lettuce using REDIS_URL environment variable");
+            try {
+                URI uri = new URI(redisUrlEnv);
+                host = uri.getHost();
+                port = uri.getPort();
+                String userInfo = uri.getUserInfo();
+                if (userInfo != null && userInfo.contains(":")) {
+                    password = userInfo.split(":")[1];
+                } else if (userInfo != null) {
+                    password = userInfo;
+                }
+                if ("rediss".equalsIgnoreCase(uri.getScheme())) {
+                    useSsl = true;
+                }
+            } catch (Exception e) {
+                System.err.println("[RedisConfig] Failed to parse REDIS_URL: " + e.getMessage());
+            }
+        } else {
+            System.out.println("[RedisConfig] Configuring Lettuce using standard host/port properties");
+            if (!"localhost".equals(redisHost) && !"127.0.0.1".equals(redisHost)) {
+                useSsl = true;
+            }
+        }
+
+        System.out.println("[RedisConfig] Connecting to Redis host: " + host + ", port: " + port + ", useSsl: " + useSsl);
+
+        config = new RedisStandaloneConfiguration(host, port);
+        if (password != null && !password.isEmpty()) {
+            config.setPassword(password);
+        }
+
+        LettuceClientConfiguration.LettuceClientConfigurationBuilder builder = LettuceClientConfiguration.builder();
+        if (useSsl) {
+            builder.useSsl().disablePeerVerification();
+        }
+
+        return new LettuceConnectionFactory(config, builder.build());
+    }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
@@ -28,16 +85,5 @@ public class RedisConfig {
         template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         template.afterPropertiesSet();
         return template;
-    }
-
-    @Bean
-    public LettuceClientConfigurationBuilderCustomizer lettuceClientCustomizer() {
-        return builder -> {
-            boolean isRemoteHost = !"localhost".equals(redisHost) && !"127.0.0.1".equals(redisHost);
-            boolean isRemoteUrl = redisUrl != null && !redisUrl.isEmpty() && !redisUrl.contains("localhost") && !redisUrl.contains("127.0.0.1");
-            if (isRemoteHost || isRemoteUrl) {
-                builder.useSsl().disablePeerVerification();
-            }
-        };
     }
 }
