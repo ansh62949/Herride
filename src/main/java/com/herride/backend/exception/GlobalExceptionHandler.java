@@ -17,15 +17,28 @@ public class GlobalExceptionHandler {
 
 
 
+    public static volatile String lastExceptionMessage = "None";
+    public static volatile String lastExceptionStackTrace = "None";
+
+    private void captureException(Throwable ex) {
+        lastExceptionMessage = ex.getClass().getName() + ": " + ex.getMessage();
+        java.io.StringWriter sw = new java.io.StringWriter();
+        java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+        ex.printStackTrace(pw);
+        lastExceptionStackTrace = sw.toString();
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(
             AuthenticationException ex) {
+        captureException(ex);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.error("Invalid email or password"));
     }
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ApiResponse<Void>> handleAppException(AppException ex) {
+        captureException(ex);
         return ResponseEntity
                 .status(ex.getStatus())
                 .body(ApiResponse.error(ex.getMessage()));
@@ -34,6 +47,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(
             MethodArgumentNotValidException ex) {
+        captureException(ex);
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String field = ((FieldError) error).getField();
@@ -51,12 +65,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(
             org.springframework.security.access.AccessDeniedException ex) {
+        captureException(ex);
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ApiResponse.error("Access denied: You do not have permission to access this resource"));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
+        captureException(ex);
         return ResponseEntity.internalServerError()
                 .body(ApiResponse.error("An unexpected error occurred: " + ex.getMessage()));
     }

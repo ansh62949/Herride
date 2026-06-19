@@ -31,6 +31,8 @@ public class TripsDebugController {
     public ResponseEntity<Map<String, Object>> debugTrips(@RequestParam(required = false) Long tripId,
                                                           @RequestParam(required = false) String driverEmail) {
         Map<String, Object> response = new HashMap<>();
+        response.put("lastExceptionMessage", com.herride.backend.exception.GlobalExceptionHandler.lastExceptionMessage);
+        response.put("lastExceptionStackTrace", com.herride.backend.exception.GlobalExceptionHandler.lastExceptionStackTrace);
         try {
             // 1. General trip stats
             long tripCount = tripRepository.count();
