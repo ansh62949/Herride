@@ -21,6 +21,12 @@ public class GlobalExceptionHandler {
     public static volatile String lastExceptionStackTrace = "None";
 
     private void captureException(Throwable ex) {
+        String name = ex.getClass().getName();
+        if (name.contains("AsyncRequestNotUsableException") || 
+            name.contains("ClientAbortException") || 
+            (ex.getMessage() != null && ex.getMessage().contains("Broken pipe"))) {
+            return;
+        }
         lastExceptionMessage = ex.getClass().getName() + ": " + ex.getMessage();
         java.io.StringWriter sw = new java.io.StringWriter();
         java.io.PrintWriter pw = new java.io.PrintWriter(sw);
