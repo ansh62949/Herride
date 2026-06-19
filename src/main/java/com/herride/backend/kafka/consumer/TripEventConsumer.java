@@ -8,6 +8,8 @@ import com.herride.backend.service.SmsService;
 import com.herride.backend.websocket.WebSocketNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
+import com.herride.backend.event.*;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -156,9 +158,119 @@ public class TripEventConsumer {
             if (smsMessage != null && trip.getRiderPhone() != null) {
                 smsService.sendSms(trip.getRiderPhone(), smsMessage);
             }
-
         } catch (Exception e) {
             log.error("Error processing trip.status.updated: {}", e.getMessage());
         }
+    }
+
+    @EventListener
+    public void onLocalTripRequested(LocalTripRequestedEvent event) {
+        TripResponse trip = event.getTrip();
+        log.info("Consumed local trip.requested: tripId={}", trip.getId());
+        if (trip.getDriverId() != null) {
+            notificationService.notifyDriverNewTripRequest(trip.getDriverId(), trip);
+        }
+    }
+
+    @EventListener
+    public void onLocalTripAccepted(LocalTripAcceptedEvent event) {
+        TripResponse trip = event.getTrip();
+        log.info("Consumed local trip.accepted: tripId={}", trip.getId());
+        notificationService.notifyRiderTripStatus(trip.getRiderId(), trip);
+        notificationService.broadcastTripUpdate(trip.getId(), trip);
+
+        String plateNumber = trip.getPlateNumber() != null ? trip.getPlateNumber() : "N/A";
+        try {
+            smsService.notifyTripAccepted(trip.getRiderPhone(), trip.getRiderName(), trip.getDriverName(), plateNumber);
+        } catch (Exception e) {
+            log.error("Failed to send local SMS: {}", e.getMessage());
+        }
+        if (trip.getDriverPhone() != null) {
+            try {
+                smsService.notifyDriverTripAccepted(trip.getDriverPhone(), trip.getRiderName(), trip.getPickupAddress());
+            } catch (Exception e) {
+                log.error("Failed to send local SMS: {}", e.getMessage());
+            }
+        }
+    }
+
+    @EventListener
+    public void onLocalTripCompleted(LocalTripCompletedEvent event) {
+        TripResponse trip = event.getTrip();
+        log.info("Consumed local trip.completed: tripId={}", trip.getId());
+        notificationService.notifyRiderTripStatus(trip.getRiderId(), trip);
+        if (trip.getDriverId() != null) {
+            notificationService.notifyDriverTripStatus(trip.getDriverId(), trip);
+        }
+        notificationService.broadcastTripUpdate(trip.getId(), trip);
+
+        try {
+            smsService.notifyTripCompleted(trip.getRiderPhone(), trip.getRiderName(), trip.getActualFare(), trip.getDistanceKm());
+        } catch (Exception e) {
+            log.error("Failed to send local SMS: {}", e.getMessage());
+        }
+        if (trip.getDriverPhone() != null && trip.getDriverEarnings() != null) {
+            try {
+                smsService.notifyDriverTripCompleted(trip.getDriverPhone(), trip.getDriverName(), trip.getDriverEarnings());
+            } catch (Exception e) {
+                log.error("Failed to send local SMS: {}", e.getMessage());
+            }
+        }
+    }
+
+    @EventListener
+    public void onLocalTripCancelled(LocalTripCancelledEvent event) {
+        TripResponse trip = event.getTrip();
+        log.info("Consumed local trip.cancelled: tripId={}", trip.getId());
+        notificationService.notifyRiderTripStatus(trip.getRiderId(), trip);
+        if (trip.getDriverId() != null) {
+            notificationService.notifyDriverTripStatus(trip.getDriverId(), trip);
+        }
+
+        String reason = trip.getCancellationReason() != null ? trip.getCancellationReason().name() : "Unknown";
+        try {
+            smsService.notifyTripCancelled(trip.getRiderPhone(), trip.getRiderName(), reason);
+        } catch (Exception e) {
+            log.error("Failed to send local SMS: {}", e.getMessage());
+        }
+        if (trip.getDriverPhone() != null && trip.getDriverName() != null) {
+            try {
+                smsService.notifyTripCancelled(trip.getDriverPhone(), trip.getDriverName(), reason);
+            } catch (Exception e) {
+                log.error("Failed to send local SMS: {}", e.getMessage());
+            }
+        }
+    }
+
+    @EventListener
+    public void onLocalTripStatusUpdated(LocalTripStatusUpdatedEvent event) {
+        TripResponse trip = event.getTrip();
+        log.info("Consumed local trip.status.updated: tripId={} status={}", trip.getId(), trip.getStatus());
+
+        String smsMessage = switch (trip.getStatus()) {
+            case DRIVER_ARRIVING -> "Your driver is on the way to your pickup location!";
+            case RIDER_PICKED -> "Your driver has arrived and you have been picked up!";
+            case IN_PROGRESS -> "Your trip has started. Destination: " + trip.getDestinationAddress();
+            default -> null;
+        };
+
+        notificationService.notifyRiderTripStatus(trip.getRiderId(), trip);
+        if (trip.getDriverId() != null) {
+            notificationService.notifyDriverTripStatus(trip.getDriverId(), trip);
+        }
+        notificationService.broadcastTripUpdate(trip.getId(), trip);
+
+        if (smsMessage != null && trip.getRiderPhone() != null) {
+            try {
+                smsService.sendSms(trip.getRiderPhone(), smsMessage);
+            } catch (Exception e) {
+                log.error("Failed to send local SMS: {}", e.getMessage());
+            }
+        }
+    }
+
+    @EventListener
+    public void onLocalSosTriggered(LocalSosTriggeredEvent event) {
+        log.info("Consumed local sos.triggered: alertId={}", event.getAlert().getId());
     }
 }
