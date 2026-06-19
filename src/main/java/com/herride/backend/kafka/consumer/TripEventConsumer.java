@@ -8,7 +8,8 @@ import com.herride.backend.service.SmsService;
 import com.herride.backend.websocket.WebSocketNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
+import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.event.TransactionPhase;
 import com.herride.backend.event.*;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -163,7 +164,7 @@ public class TripEventConsumer {
         }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onLocalTripRequested(LocalTripRequestedEvent event) {
         TripResponse trip = event.getTrip();
         log.info("Consumed local trip.requested: tripId={}", trip.getId());
@@ -172,7 +173,7 @@ public class TripEventConsumer {
         }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onLocalTripAccepted(LocalTripAcceptedEvent event) {
         TripResponse trip = event.getTrip();
         log.info("Consumed local trip.accepted: tripId={}", trip.getId());
@@ -194,7 +195,7 @@ public class TripEventConsumer {
         }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onLocalTripCompleted(LocalTripCompletedEvent event) {
         TripResponse trip = event.getTrip();
         log.info("Consumed local trip.completed: tripId={}", trip.getId());
@@ -218,7 +219,7 @@ public class TripEventConsumer {
         }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onLocalTripCancelled(LocalTripCancelledEvent event) {
         TripResponse trip = event.getTrip();
         log.info("Consumed local trip.cancelled: tripId={}", trip.getId());
@@ -242,7 +243,7 @@ public class TripEventConsumer {
         }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onLocalTripStatusUpdated(LocalTripStatusUpdatedEvent event) {
         TripResponse trip = event.getTrip();
         log.info("Consumed local trip.status.updated: tripId={} status={}", trip.getId(), trip.getStatus());
@@ -269,7 +270,7 @@ public class TripEventConsumer {
         }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onLocalSosTriggered(LocalSosTriggeredEvent event) {
         log.info("Consumed local sos.triggered: alertId={}", event.getAlert().getId());
     }
