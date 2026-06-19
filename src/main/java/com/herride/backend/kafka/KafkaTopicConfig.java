@@ -18,56 +18,56 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic tripRequestedTopic() {
-        return TopicBuilder.name(TRIP_REQUESTED_TOPIC).partitions(3).replicas(1).build();
+        return TopicBuilder.name(TRIP_REQUESTED_TOPIC).partitions(3).build();
     }
 
     @Bean
     public NewTopic tripAcceptedTopic() {
-        return TopicBuilder.name(TRIP_ACCEPTED_TOPIC).partitions(3).replicas(1).build();
+        return TopicBuilder.name(TRIP_ACCEPTED_TOPIC).partitions(3).build();
     }
 
     @Bean
     public NewTopic tripCompletedTopic() {
-        return TopicBuilder.name(TRIP_COMPLETED_TOPIC).partitions(3).replicas(1).build();
+        return TopicBuilder.name(TRIP_COMPLETED_TOPIC).partitions(3).build();
     }
 
     @Bean
     public NewTopic tripCancelledTopic() {
-        return TopicBuilder.name(TRIP_CANCELLED_TOPIC).partitions(3).replicas(1).build();
+        return TopicBuilder.name(TRIP_CANCELLED_TOPIC).partitions(3).build();
     }
 
     @Bean
     public NewTopic tripStatusUpdatedTopic() {
-        return TopicBuilder.name(TRIP_STATUS_UPDATED_TOPIC).partitions(3).replicas(1).build();
+        return TopicBuilder.name(TRIP_STATUS_UPDATED_TOPIC).partitions(3).build();
     }
 
     @Bean
     public NewTopic sosTriggeredTopic() {
-        return TopicBuilder.name(SOS_TRIGGERED_TOPIC).partitions(3).replicas(1).build();
+        return TopicBuilder.name(SOS_TRIGGERED_TOPIC).partitions(3).build();
     }
 
     @Bean
     public NewTopic tripRequestedDlq() {
-        return TopicBuilder.name(TRIP_REQUESTED_TOPIC + ".DLQ").partitions(1).replicas(1).build();
+        return TopicBuilder.name(TRIP_REQUESTED_TOPIC + ".DLQ").partitions(1).build();
     }
 
     @Bean
     public NewTopic tripAcceptedDlq() {
-        return TopicBuilder.name(TRIP_ACCEPTED_TOPIC + ".DLQ").partitions(1).replicas(1).build();
+        return TopicBuilder.name(TRIP_ACCEPTED_TOPIC + ".DLQ").partitions(1).build();
     }
 
     @Bean
     public NewTopic tripCompletedDlq() {
-        return TopicBuilder.name(TRIP_COMPLETED_TOPIC + ".DLQ").partitions(1).replicas(1).build();
+        return TopicBuilder.name(TRIP_COMPLETED_TOPIC + ".DLQ").partitions(1).build();
     }
 
     @Bean
     public NewTopic tripCancelledDlq() {
-        return TopicBuilder.name(TRIP_CANCELLED_TOPIC + ".DLQ").partitions(1).replicas(1).build();
+        return TopicBuilder.name(TRIP_CANCELLED_TOPIC + ".DLQ").partitions(1).build();
     }
 
     @Bean
     public NewTopic tripStatusUpdatedDlq() {
-        return TopicBuilder.name(TRIP_STATUS_UPDATED_TOPIC + ".DLQ").partitions(1).replicas(1).build();
+        return TopicBuilder.name(TRIP_STATUS_UPDATED_TOPIC + ".DLQ").partitions(1).build();
     }
 }
