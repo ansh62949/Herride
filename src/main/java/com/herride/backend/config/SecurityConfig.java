@@ -66,6 +66,23 @@ public class SecurityConfig {
                                     "{\"success\":false,\"message\":\"Unauthorized\"}"
                             );
                         })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            org.springframework.security.core.Authentication auth =
+                                    org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+                            if (auth == null || auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken) {
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                response.setContentType("application/json");
+                                response.getWriter().write(
+                                        "{\"success\":false,\"message\":\"Unauthorized\"}"
+                                );
+                            } else {
+                                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                                response.setContentType("application/json");
+                                response.getWriter().write(
+                                        "{\"success\":false,\"message\":\"Forbidden\"}"
+                                );
+                            }
+                        })
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
