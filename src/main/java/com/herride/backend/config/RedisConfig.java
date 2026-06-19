@@ -15,6 +15,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.host:localhost}")
     private String redisHost;
 
+    @Value("${spring.data.redis.url:}")
+    private String redisUrl;
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
@@ -30,7 +33,9 @@ public class RedisConfig {
     @Bean
     public LettuceClientConfigurationBuilderCustomizer lettuceClientCustomizer() {
         return builder -> {
-            if (!"localhost".equals(redisHost) && !"127.0.0.1".equals(redisHost)) {
+            boolean isRemoteHost = !"localhost".equals(redisHost) && !"127.0.0.1".equals(redisHost);
+            boolean isRemoteUrl = redisUrl != null && !redisUrl.isEmpty() && !redisUrl.contains("localhost") && !redisUrl.contains("127.0.0.1");
+            if (isRemoteHost || isRemoteUrl) {
                 builder.useSsl().disablePeerVerification();
             }
         };
