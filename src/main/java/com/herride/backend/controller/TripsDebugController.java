@@ -80,6 +80,17 @@ public class TripsDebugController {
             }).collect(Collectors.toList());
             response.put("driverProfiles", driversList);
 
+            // 3.5. Users list
+            List<Map<String, Object>> usersList = userRepository.findAll().stream().map(u -> {
+                Map<String, Object> m = new HashMap<>();
+                m.put("userId", u.getId());
+                m.put("email", u.getEmail());
+                m.put("role", u.getRole());
+                m.put("gender", u.getGender());
+                return m;
+            }).collect(Collectors.toList());
+            response.put("users", usersList);
+
             // 4. Specific driver check
             if (driverEmail != null) {
                 userRepository.findByEmail(driverEmail).ifPresent(user -> {
