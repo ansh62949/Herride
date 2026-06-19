@@ -18,7 +18,7 @@ class WebSocketService {
     if (import.meta.env.VITE_WS_URL) {
       brokerURL = import.meta.env.VITE_WS_URL;
     } else if (import.meta.env.PROD) {
-      brokerURL = 'wss://api-herride.onrender.com/ws/websocket';
+      brokerURL = 'wss://herride.onrender.com/ws/websocket';
     } else {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const host = window.location.host;
