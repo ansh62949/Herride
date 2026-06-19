@@ -1,4 +1,4 @@
-﻿# HerRide â€” Safe. Reliable. Women-Driven Mobility.
+# HerRide â€” Safe. Reliable. Women-Driven Mobility.
 
 HerRide is an early-stage startup MVP concept and safety-first ride-hailing platform designed exclusively for women in India. The platform directly addresses critical safety concerns in urban transportation by connecting female passengers with verified female drivers, while offering real-time emergency safety tools, trusted-contact ride sharing, and active command-center GPS shielding.
 
@@ -6,9 +6,9 @@ HerRide is an early-stage startup MVP concept and safety-first ride-hailing plat
 
 ## 1. Live Deployment
 
-- **Frontend Client**: [https://herride.vercel.app](https://herride.vercel.app)
-- **Backend API**: [https://api-herride.onrender.com](https://api-herride.onrender.com)
-- **Swagger Documentation**: [https://api-herride.onrender.com/swagger-ui/index.html](https://api-herride.onrender.com/swagger-ui/index.html)
+- **Frontend Client**: [https://herride-six.vercel.app/](https://herride-six.vercel.app/)
+- **Backend API**: [https://herride.onrender.com/](https://herride.onrender.com/)
+- **Swagger Documentation**: [https://herride.onrender.com/swagger-ui.html](https://herride.onrender.com/swagger-ui.html)
 
 ---
 
