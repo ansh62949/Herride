@@ -85,6 +85,7 @@ public class TripsDebugController {
                 Map<String, Object> m = new HashMap<>();
                 m.put("userId", u.getId());
                 m.put("email", u.getEmail());
+                m.put("phone", u.getPhone());
                 m.put("role", u.getRole());
                 m.put("gender", u.getGender());
                 return m;
