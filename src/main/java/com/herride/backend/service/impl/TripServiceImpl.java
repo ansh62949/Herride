@@ -128,8 +128,14 @@ public class TripServiceImpl implements TripService {
     public TripResponse acceptTrip(String driverEmail, Long tripId) {
         User driver = getUser(driverEmail);
         
+        log.info("acceptTrip called for driver: {}, tripId: {}", driverEmail, tripId);
+        log.info("Total trips count in DB during acceptTrip: {}", tripRepository.count());
+        log.info("Existing trip IDs in DB: {}", tripRepository.findAll().stream().map(Trip::getId).toList());
         Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new AppException("Trip not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("Could not find trip with ID: {} inside acceptTrip", tripId);
+                    return new AppException("Trip not found", HttpStatus.NOT_FOUND);
+                });
 
         if (trip.getStatus() == TripStatus.DRIVER_ASSIGNED && trip.getDriver() != null && trip.getDriver().getId().equals(driver.getId())) {
             log.info("Driver {} is already assigned to trip {}. Returning success.", driverEmail, tripId);
