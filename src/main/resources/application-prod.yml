@@ -22,5 +22,6 @@ jwt:
   secret: ${JWT_SECRET}
 
 app:
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}
   jwt:
     secret: ${JWT_SECRET}

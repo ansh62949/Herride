@@ -6,6 +6,7 @@ import com.herride.backend.model.dto.response.PaystackInitResponse;
 import com.herride.backend.model.dto.response.PaystackVerifyResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,9 @@ public class PaystackClient {
 
     private final PaystackConfig paystackConfig;
     private final WebClient.Builder webClientBuilder;
+
+    @Value("${app.frontend-url:http://localhost:5173}")
+    private String frontendUrl;
 
     private WebClient getClient() {
         return webClientBuilder
@@ -63,7 +67,7 @@ public class PaystackClient {
             
             PaystackInitResponse.PaystackData data = new PaystackInitResponse.PaystackData();
             data.setAccessCode("SANDBOX_CODE_" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-            data.setAuthorizationUrl("http://localhost:5173/payment/sandbox?reference=" + request.getReference());
+            data.setAuthorizationUrl(frontendUrl + "/payment/sandbox?reference=" + request.getReference());
             data.setReference(request.getReference());
             response.setData(data);
             return response;
@@ -125,7 +129,7 @@ public class PaystackClient {
         
         PaystackInitResponse.PaystackData data = new PaystackInitResponse.PaystackData();
         data.setAccessCode("SANDBOX_CODE_" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-        data.setAuthorizationUrl("http://localhost:5173/payment/sandbox?reference=" + request.getReference());
+        data.setAuthorizationUrl(frontendUrl + "/payment/sandbox?reference=" + request.getReference());
         data.setReference(request.getReference());
         response.setData(data);
         return response;

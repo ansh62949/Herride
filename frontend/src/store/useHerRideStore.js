@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import api from '../services/api';
 import websocketService from '../services/websocket';
 
-const DEMO_MODE = true;
+const DEMO_MODE = false;
 
 // Load initial states from LocalStorage for persistence
 const initialUser = JSON.parse(localStorage.getItem('user') || 'null');
