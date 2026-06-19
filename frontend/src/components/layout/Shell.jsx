@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useHerRideStore } from '../../store/useHerRideStore';
 import { 
@@ -35,6 +35,14 @@ export default function Shell({ children }) {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  React.useEffect(() => {
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    if (!token || !storedUser) {
+      navigate('/auth?flow=login');
+    }
+  }, [navigate]);
+
   const handleRoleChange = (newRole) => {
     setRole(newRole);
     setDrawerOpen(false);
@@ -58,8 +66,8 @@ export default function Shell({ children }) {
     navigate('/auth?flow=login');
   };
 
-  if (user?.role === 'ADMIN' || location.pathname.startsWith('/admin')) {
-    if (user?.email !== 'admin@herride.com') {
+  if (user && (user.role === 'ADMIN' || location.pathname.startsWith('/admin'))) {
+    if (user.email !== 'admin@herride.com') {
       return (
         <div className="w-full min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white p-6 font-sans select-none">
           <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
