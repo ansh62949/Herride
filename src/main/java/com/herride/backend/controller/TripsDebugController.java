@@ -26,78 +26,86 @@ public class TripsDebugController {
     private final DriverProfileRepository driverProfileRepository;
     private final UserRepository userRepository;
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     @GetMapping("/trips-debug")
     public ResponseEntity<Map<String, Object>> debugTrips(@RequestParam(required = false) Long tripId,
                                                           @RequestParam(required = false) String driverEmail) {
         Map<String, Object> response = new HashMap<>();
+        try {
+            // 1. General trip stats
+            long tripCount = tripRepository.count();
+            response.put("totalTrips", tripCount);
 
-        // 1. General trip stats
-        long tripCount = tripRepository.count();
-        response.put("totalTrips", tripCount);
+            List<Map<String, Object>> tripsList = tripRepository.findAll().stream().map(t -> {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", t.getId());
+                m.put("status", t.getStatus());
+                m.put("riderEmail", t.getRider() != null ? t.getRider().getEmail() : "null");
+                m.put("driverEmail", t.getDriver() != null ? t.getDriver().getEmail() : "null");
+                return m;
+            }).collect(Collectors.toList());
+            response.put("trips", tripsList);
 
-        List<Map<String, Object>> tripsList = tripRepository.findAll().stream().map(t -> {
-            Map<String, Object> m = new HashMap<>();
-            m.put("id", t.getId());
-            m.put("status", t.getStatus());
-            m.put("riderEmail", t.getRider().getEmail());
-            m.put("driverEmail", t.getDriver() != null ? t.getDriver().getEmail() : "null");
-            return m;
-        }).collect(Collectors.toList());
-        response.put("trips", tripsList);
-
-        // 2. Specific trip
-        if (tripId != null) {
-            Trip t = tripRepository.findById(tripId).orElse(null);
-            if (t != null) {
-                Map<String, Object> details = new HashMap<>();
-                details.put("id", t.getId());
-                details.put("status", t.getStatus());
-                details.put("rider", t.getRider().getEmail());
-                details.put("driver", t.getDriver() != null ? t.getDriver().getEmail() : "null");
-                details.put("vehicleType", t.getVehicleType());
-                response.put("tripDetails", details);
-            } else {
-                response.put("tripDetails", "Not Found");
-            }
-        }
-
-        // 3. Driver profiles stats
-        long driverProfilesCount = driverProfileRepository.count();
-        response.put("totalDriverProfiles", driverProfilesCount);
-
-        List<Map<String, Object>> driversList = driverProfileRepository.findAll().stream().map(d -> {
-            Map<String, Object> m = new HashMap<>();
-            m.put("driverId", d.getId());
-            m.put("userId", d.getUser().getId());
-            m.put("email", d.getUser().getEmail());
-            m.put("verificationStatus", d.getVerificationStatus());
-            m.put("driverStatus", d.getDriverStatus());
-            m.put("gender", d.getUser().getGender());
-            return m;
-        }).collect(Collectors.toList());
-        response.put("driverProfiles", driversList);
-
-        // 4. Specific driver check
-        if (driverEmail != null) {
-            userRepository.findByEmail(driverEmail).ifPresent(user -> {
-                Map<String, Object> userMap = new HashMap<>();
-                userMap.put("userId", user.getId());
-                userMap.put("email", user.getEmail());
-                userMap.put("gender", user.getGender());
-                userMap.put("role", user.getRole());
-                
-                DriverProfile profile = driverProfileRepository.findByUserId(user.getId()).orElse(null);
-                if (profile != null) {
-                    Map<String, Object> profMap = new HashMap<>();
-                    profMap.put("profileId", profile.getId());
-                    profMap.put("verificationStatus", profile.getVerificationStatus());
-                    profMap.put("driverStatus", profile.getDriverStatus());
-                    userMap.put("profile", profMap);
+            // 2. Specific trip
+            if (tripId != null) {
+                Trip t = tripRepository.findById(tripId).orElse(null);
+                if (t != null) {
+                    Map<String, Object> details = new HashMap<>();
+                    details.put("id", t.getId());
+                    details.put("status", t.getStatus());
+                    details.put("rider", t.getRider() != null ? t.getRider().getEmail() : "null");
+                    details.put("driver", t.getDriver() != null ? t.getDriver().getEmail() : "null");
+                    details.put("vehicleType", t.getVehicleType());
+                    response.put("tripDetails", details);
                 } else {
-                    userMap.put("profile", "Not Found");
+                    response.put("tripDetails", "Not Found");
                 }
-                response.put("driverUserCheck", userMap);
-            });
+            }
+
+            // 3. Driver profiles stats
+            long driverProfilesCount = driverProfileRepository.count();
+            response.put("totalDriverProfiles", driverProfilesCount);
+
+            List<Map<String, Object>> driversList = driverProfileRepository.findAll().stream().map(d -> {
+                Map<String, Object> m = new HashMap<>();
+                m.put("driverId", d.getId());
+                m.put("userId", d.getUser() != null ? d.getUser().getId() : null);
+                m.put("email", d.getUser() != null ? d.getUser().getEmail() : "null");
+                m.put("verificationStatus", d.getVerificationStatus());
+                m.put("driverStatus", d.getDriverStatus());
+                m.put("gender", d.getUser() != null ? d.getUser().getGender() : null);
+                return m;
+            }).collect(Collectors.toList());
+            response.put("driverProfiles", driversList);
+
+            // 4. Specific driver check
+            if (driverEmail != null) {
+                userRepository.findByEmail(driverEmail).ifPresent(user -> {
+                    Map<String, Object> userMap = new HashMap<>();
+                    userMap.put("userId", user.getId());
+                    userMap.put("email", user.getEmail());
+                    userMap.put("gender", user.getGender());
+                    userMap.put("role", user.getRole());
+                    
+                    DriverProfile profile = driverProfileRepository.findByUserId(user.getId()).orElse(null);
+                    if (profile != null) {
+                        Map<String, Object> profMap = new HashMap<>();
+                        profMap.put("profileId", profile.getId());
+                        profMap.put("verificationStatus", profile.getVerificationStatus());
+                        profMap.put("driverStatus", profile.getDriverStatus());
+                        userMap.put("profile", profMap);
+                    } else {
+                        userMap.put("profile", "Not Found");
+                    }
+                    response.put("driverUserCheck", userMap);
+                });
+            }
+        } catch (Throwable e) {
+            response.put("error", e.getMessage());
+            java.io.StringWriter sw = new java.io.StringWriter();
+            java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+            e.printStackTrace(pw);
+            response.put("stackTrace", sw.toString());
         }
 
         return ResponseEntity.ok(response);
