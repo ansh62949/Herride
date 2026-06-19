@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHerRideStore } from '../../store/useHerRideStore';
-import { Shield, AlertTriangle, ShieldCheck, PhoneCall, Radio, ArrowLeft } from 'lucide-react';
+import { Shield, AlertTriangle, ShieldCheck, PhoneCall, Radio, ArrowLeft, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function SOS() {

@@ -73,14 +73,6 @@ export default function Home() {
     setPaymentError('');
     const paymentData = await initializePayment(currentTrip.id);
     if (paymentData) {
-      const isDemo = paymentData.reference && paymentData.reference.startsWith('demo-');
-      if (isDemo) {
-        setTimeout(async () => {
-          await verifyPayment(paymentData.reference);
-          setPaymentLoading(false);
-        }, 1500);
-        return;
-      }
       setPaymentLoading(false);
       if (paymentData.authorizationUrl) {
         window.open(paymentData.authorizationUrl, '_blank');
