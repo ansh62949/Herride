@@ -14,4 +14,5 @@ public interface AuthService {
     void logout(String email);
     OtpSendResponse sendOtp(String phone);
     AuthResponse verifyOtpAndLogin(OtpVerifyRequest request);
+    void resetAdminPassword();
 }

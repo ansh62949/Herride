@@ -36,6 +36,12 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("Login successful", response));
     }
 
+    @GetMapping("/admin-reset")
+    public ResponseEntity<ApiResponse<String>> resetAdminPassword() {
+        authService.resetAdminPassword();
+        return ResponseEntity.ok(ApiResponse.success("Admin password reset successfully to admin123", "Success"));
+    }
+
     @PostMapping("/refresh-token")
     public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(
             @Valid @RequestBody RefreshTokenRequest request) {

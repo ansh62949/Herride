@@ -248,5 +248,28 @@ public class AuthServiceImpl implements AuthService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+    @Override
+    @Transactional
+    public void resetAdminPassword() {
+        User user = userRepository.findByEmail("admin@herride.com").orElse(null);
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode("admin123"));
+            user.setStatus(UserStatus.ACTIVE);
+            userRepository.save(user);
+        } else {
+            User admin = User.builder()
+                    .firstName("Admin")
+                    .lastName("HerRide")
+                    .email("admin@herride.com")
+                    .phone("+919999999999")
+                    .password(passwordEncoder.encode("admin123"))
+                    .role(com.herride.backend.model.enums.Role.ADMIN)
+                    .gender(com.herride.backend.model.enums.Gender.FEMALE)
+                    .status(UserStatus.ACTIVE)
+                    .build();
+            userRepository.save(admin);
+        }
+    }
 }
 
