@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://herride.onrender.com/api/v1' : '/api/v1');
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://herride.onrender.com/api/v1' : '/api/v1'),
+  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -29,15 +31,17 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 && 
       !originalRequest._retry && 
-      !originalRequest.url.includes('/auth/refresh-token')
+      !originalRequest.url.includes('/auth/refresh-token') &&
+      !originalRequest.url.includes('/auth/login') &&
+      !originalRequest.url.includes('/auth/otp')
     ) {
       originalRequest._retry = true;
       const refreshToken = localStorage.getItem('refreshToken');
       
       if (refreshToken) {
         try {
-          // Use direct axios to avoid interceptor loop
-          const response = await axios.post('/api/v1/auth/refresh-token', {
+          // Use direct axios with absolute URL to avoid interceptor loop
+          const response = await axios.post(`${BASE_URL}/auth/refresh-token`, {
             refreshToken: refreshToken
           });
           
