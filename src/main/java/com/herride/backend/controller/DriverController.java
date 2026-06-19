@@ -29,7 +29,7 @@ public class DriverController {
     private final LocationService locationService;
 
     @PostMapping("/profile")
-    @PreAuthorize("hasRole('DRIVER')")
+    @PreAuthorize("hasAnyRole('DRIVER', 'RIDER')")
     public ResponseEntity<ApiResponse<DriverProfileResponse>> createProfile(
             @AuthenticationPrincipal UserDetails userDetails,
             @Valid @RequestBody DriverProfileRequest request) {
@@ -40,7 +40,7 @@ public class DriverController {
     }
 
     @GetMapping("/profile")
-    @PreAuthorize("hasRole('DRIVER')")
+    @PreAuthorize("hasAnyRole('DRIVER', 'RIDER')")
     public ResponseEntity<ApiResponse<DriverProfileResponse>> getProfile(
             @AuthenticationPrincipal UserDetails userDetails) {
         DriverProfileResponse response = driverProfileService.getProfile(userDetails.getUsername());

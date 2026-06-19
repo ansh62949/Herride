@@ -34,9 +34,13 @@ public class DriverProfileServiceImpl implements DriverProfileService {
     public DriverProfileResponse createProfile(String email, DriverProfileRequest request) {
         User user = getUser(email);
 
-        if (user.getRole() != Role.DRIVER) {
+        if (user.getRole() == Role.RIDER) {
+            user.setRole(Role.DRIVER);
+            userRepository.save(user);
+        } else if (user.getRole() != Role.DRIVER) {
             throw new AppException("Only drivers can create a driver profile", HttpStatus.FORBIDDEN);
         }
+
         if (driverProfileRepository.existsByUserId(user.getId())) {
             throw new AppException("Driver profile already exists", HttpStatus.CONFLICT);
         }

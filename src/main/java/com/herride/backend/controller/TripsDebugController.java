@@ -2,9 +2,8 @@ package com.herride.backend.controller;
 
 import com.herride.backend.model.entity.DriverProfile;
 import com.herride.backend.model.entity.Trip;
-import com.herride.backend.repository.DriverProfileRepository;
-import com.herride.backend.repository.TripRepository;
-import com.herride.backend.repository.UserRepository;
+import com.herride.backend.model.entity.User;
+import com.herride.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +24,14 @@ public class TripsDebugController {
     private final TripRepository tripRepository;
     private final DriverProfileRepository driverProfileRepository;
     private final UserRepository userRepository;
+    private final SosAlertRepository sosAlertRepository;
+    private final IncidentReportRepository incidentReportRepository;
+    private final PaymentRepository paymentRepository;
+    private final TrustedContactRepository trustedContactRepository;
+    private final SafetyCheckinRepository safetyCheckinRepository;
+    private final RideShareTokenRepository rideShareTokenRepository;
+    private final DriverLocationRepository driverLocationRepository;
+    private final RiderProfileRepository riderProfileRepository;
 
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     @GetMapping("/trips-debug")
@@ -122,6 +129,82 @@ public class TripsDebugController {
             response.put("stackTrace", sw.toString());
         }
 
+        return ResponseEntity.ok(response);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    @GetMapping("/db-reset")
+    public ResponseEntity<Map<String, Object>> resetDb() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Delete all child tables first to avoid foreign key constraints
+            sosAlertRepository.deleteAll();
+            incidentReportRepository.deleteAll();
+            paymentRepository.deleteAll();
+            tripRepository.deleteAll();
+            driverProfileRepository.deleteAll();
+            trustedContactRepository.deleteAll();
+            safetyCheckinRepository.deleteAll();
+            rideShareTokenRepository.deleteAll();
+            driverLocationRepository.deleteAll();
+            riderProfileRepository.deleteAll();
+            userRepository.deleteAll();
+
+            // Re-seed Admin
+            User admin = User.builder()
+                    .firstName("Admin")
+                    .lastName("HerRide")
+                    .email("admin@herride.com")
+                    .phone("+919999999999")
+                    .password("$2a$10$UIr1HhX1F2Q4e.2M2c2YI.tVpC6Qh2S7qgG1sD/3g5M2f7mKz72Ea") // default password bcyrpt
+                    .role(com.herride.backend.model.enums.Role.ADMIN)
+                    .gender(com.herride.backend.model.enums.Gender.FEMALE)
+                    .status(com.herride.backend.model.enums.UserStatus.ACTIVE)
+                    .build();
+            userRepository.save(admin);
+
+            // Re-seed Driver
+            User driver = User.builder()
+                    .firstName("Priya")
+                    .lastName("Sharma")
+                    .email("driver@herride.com")
+                    .phone("+919876543210")
+                    .password("$2a$10$UIr1HhX1F2Q4e.2M2c2YI.tVpC6Qh2S7qgG1sD/3g5M2f7mKz72Ea") // default password bcrypt
+                    .role(com.herride.backend.model.enums.Role.DRIVER)
+                    .gender(com.herride.backend.model.enums.Gender.FEMALE)
+                    .status(com.herride.backend.model.enums.UserStatus.ACTIVE)
+                    .build();
+            userRepository.save(driver);
+
+            DriverProfile profile = DriverProfile.builder()
+                    .user(driver)
+                    .vehicleType(com.herride.backend.model.enums.VehicleType.SEDAN)
+                    .vehicleMake("Maruti Suzuki")
+                    .vehicleModel("Swift Dzire")
+                    .vehicleYear("2022")
+                    .plateNumber("DL01AB1234")
+                    .vehicleColor("White")
+                    .licenseNumber("DL1420220001234")
+                    .driverStatus(com.herride.backend.model.enums.DriverStatus.ONLINE)
+                    .verificationStatus(com.herride.backend.model.enums.VerificationStatus.VERIFIED)
+                    .rating(4.95)
+                    .totalTrips(120)
+                    .totalEarnings(0.0)
+                    .acceptanceRate(100.0)
+                    .safetyScore(100.0)
+                    .build();
+            driverProfileRepository.save(profile);
+
+            response.put("success", true);
+            response.put("message", "Database successfully cleared and re-seeded default admin and driver accounts.");
+        } catch (Throwable e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            java.io.StringWriter sw = new java.io.StringWriter();
+            java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+            e.printStackTrace(pw);
+            response.put("stackTrace", sw.toString());
+        }
         return ResponseEntity.ok(response);
     }
 }
