@@ -27,9 +27,58 @@ public class RedisConfig {
     @Value("${REDIS_URL:}")
     private String redisUrlEnv;
 
+    private String cleanHost(String rawHost) {
+        if (rawHost == null) return null;
+        String cleaned = rawHost.trim();
+        if (cleaned.startsWith("rediss://")) {
+            cleaned = cleaned.substring(9);
+        } else if (cleaned.startsWith("redis://")) {
+            cleaned = cleaned.substring(8);
+        } else if (cleaned.startsWith("https://")) {
+            cleaned = cleaned.substring(8);
+        } else if (cleaned.startsWith("http://")) {
+            cleaned = cleaned.substring(7);
+        }
+        int slashIdx = cleaned.indexOf('/');
+        if (slashIdx != -1) {
+            cleaned = cleaned.substring(0, slashIdx);
+        }
+        int colonIdx = cleaned.indexOf(':');
+        if (colonIdx != -1) {
+            cleaned = cleaned.substring(0, colonIdx);
+        }
+        return cleaned;
+    }
+
+    private int extractPort(String rawHost, int defaultPort) {
+        if (rawHost == null) return defaultPort;
+        String cleaned = rawHost.trim();
+        if (cleaned.startsWith("rediss://")) {
+            cleaned = cleaned.substring(9);
+        } else if (cleaned.startsWith("redis://")) {
+            cleaned = cleaned.substring(8);
+        } else if (cleaned.startsWith("https://")) {
+            cleaned = cleaned.substring(8);
+        } else if (cleaned.startsWith("http://")) {
+            cleaned = cleaned.substring(7);
+        }
+        int slashIdx = cleaned.indexOf('/');
+        if (slashIdx != -1) {
+            cleaned = cleaned.substring(0, slashIdx);
+        }
+        int colonIdx = cleaned.indexOf(':');
+        if (colonIdx != -1) {
+            try {
+                return Integer.parseInt(cleaned.substring(colonIdx + 1));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+        }
+        return defaultPort;
+    }
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration config;
         boolean useSsl = false;
         String host = redisHost;
         int port = redisPort;
@@ -38,9 +87,17 @@ public class RedisConfig {
         if (redisUrlEnv != null && !redisUrlEnv.isEmpty()) {
             System.out.println("[RedisConfig] Configuring Lettuce using REDIS_URL environment variable");
             try {
-                URI uri = new URI(redisUrlEnv);
+                String urlToParse = redisUrlEnv.trim();
+                if (urlToParse.startsWith("https://")) {
+                    useSsl = true;
+                    urlToParse = "rediss://" + urlToParse.substring(8);
+                } else if (urlToParse.startsWith("http://")) {
+                    urlToParse = "redis://" + urlToParse.substring(7);
+                }
+                
+                URI uri = new URI(urlToParse);
                 host = uri.getHost();
-                port = uri.getPort();
+                port = uri.getPort() != -1 ? uri.getPort() : port;
                 String userInfo = uri.getUserInfo();
                 if (userInfo != null && userInfo.contains(":")) {
                     password = userInfo.split(":")[1];
@@ -55,14 +112,22 @@ public class RedisConfig {
             }
         } else {
             System.out.println("[RedisConfig] Configuring Lettuce using standard host/port properties");
-            if (!"localhost".equals(redisHost) && !"127.0.0.1".equals(redisHost)) {
+            if (redisHost != null) {
+                String trimmedHost = redisHost.trim();
+                if (trimmedHost.startsWith("rediss://") || trimmedHost.startsWith("https://")) {
+                    useSsl = true;
+                }
+                port = extractPort(redisHost, redisPort);
+                host = cleanHost(redisHost);
+            }
+            if (!"localhost".equals(host) && !"127.0.0.1".equals(host)) {
                 useSsl = true;
             }
         }
 
         System.out.println("[RedisConfig] Connecting to Redis host: " + host + ", port: " + port + ", useSsl: " + useSsl);
 
-        config = new RedisStandaloneConfiguration(host, port);
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
         if (password != null && !password.isEmpty()) {
             config.setPassword(password);
         }
