@@ -213,6 +213,21 @@ class TripServiceTest {
     }
 
     @Test
+    @DisplayName("Should return successfully on status update to the same status (idempotency)")
+    void shouldBeIdempotentOnSameStatusUpdate() {
+        trip.setStatus(TripStatus.DRIVER_ARRIVING);
+
+        when(userRepository.findByEmail("driver@test.com")).thenReturn(Optional.of(driver));
+        when(tripRepository.findByIdAndDriverId(1L, driver.getId()))
+                .thenReturn(Optional.of(trip));
+
+        TripResponse response = tripService.updateTripStatus("driver@test.com", 1L, "EN_ROUTE");
+
+        assertThat(response.getStatus()).isEqualTo(TripStatus.DRIVER_ARRIVING);
+        verify(tripRepository, never()).save(any());
+    }
+
+    @Test
     @DisplayName("Should cancel trip successfully as rider")
     void shouldCancelTripSuccessfullyAsRider() {
         com.herride.backend.model.dto.request.CancelTripRequest cancelRequest =

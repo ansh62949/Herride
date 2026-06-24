@@ -189,21 +189,37 @@ public class TripServiceImpl implements TripService {
 
         switch (action.toUpperCase()) {
             case "EN_ROUTE", "ARRIVING" -> {
+                if (trip.getStatus() == TripStatus.DRIVER_ARRIVING) {
+                    log.info("Trip {} is already DRIVER_ARRIVING. Returning success.", tripId);
+                    return toResponse(trip);
+                }
                 validateTransition(trip.getStatus(), TripStatus.DRIVER_ASSIGNED, TripStatus.DRIVER_ARRIVING);
                 trip.setStatus(TripStatus.DRIVER_ARRIVING);
                 trip.setDriverEnRouteAt(LocalDateTime.now());
             }
             case "ARRIVED", "PICKED", "PICKUP" -> {
+                if (trip.getStatus() == TripStatus.RIDER_PICKED) {
+                    log.info("Trip {} is already RIDER_PICKED. Returning success.", tripId);
+                    return toResponse(trip);
+                }
                 validateTransition(trip.getStatus(), TripStatus.DRIVER_ARRIVING, TripStatus.RIDER_PICKED);
                 trip.setStatus(TripStatus.RIDER_PICKED);
                 trip.setArrivedAt(LocalDateTime.now());
             }
             case "START" -> {
+                if (trip.getStatus() == TripStatus.IN_PROGRESS) {
+                    log.info("Trip {} is already IN_PROGRESS. Returning success.", tripId);
+                    return toResponse(trip);
+                }
                 validateTransition(trip.getStatus(), TripStatus.RIDER_PICKED, TripStatus.IN_PROGRESS);
                 trip.setStatus(TripStatus.IN_PROGRESS);
                 trip.setStartedAt(LocalDateTime.now());
             }
             case "COMPLETE" -> {
+                if (trip.getStatus() == TripStatus.COMPLETED) {
+                    log.info("Trip {} is already COMPLETED. Returning success.", tripId);
+                    return toResponse(trip);
+                }
                 validateTransition(trip.getStatus(), TripStatus.IN_PROGRESS, TripStatus.COMPLETED);
                 completeTrip(trip, driver);
             }
@@ -241,10 +257,14 @@ public class TripServiceImpl implements TripService {
             throw new AppException("You are not part of this trip", HttpStatus.FORBIDDEN);
         }
 
+        if (trip.getStatus() == TripStatus.CANCELLED) {
+            log.info("Trip {} is already CANCELLED. Returning success.", tripId);
+            return toResponse(trip);
+        }
+
         // Can only cancel before IN_PROGRESS
         if (trip.getStatus() == TripStatus.IN_PROGRESS ||
-                trip.getStatus() == TripStatus.COMPLETED ||
-                trip.getStatus() == TripStatus.CANCELLED) {
+                trip.getStatus() == TripStatus.COMPLETED) {
             throw new AppException("Trip cannot be cancelled at this stage", HttpStatus.BAD_REQUEST);
         }
 
