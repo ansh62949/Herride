@@ -155,9 +155,7 @@ public class TripServiceImpl implements TripService {
             throw new AppException("Driver profile must be verified by admin before accepting trips", HttpStatus.FORBIDDEN);
         }
 
-        if (profile.getDriverStatus() != DriverStatus.ONLINE) {
-            throw new AppException("Driver must be online to accept trips", HttpStatus.BAD_REQUEST);
-        }
+
 
         if (tripRepository.countActiveTripsForDriverExcludingTrip(driver.getId(), trip.getId()) > 0) {
             throw new AppException("You already have an active trip", HttpStatus.CONFLICT);
