@@ -281,37 +281,6 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## 8. Screenshots
-
-### Rider Home
-![Home](docs/screenshots/home.png)
-
-### Rider Booking Selection
-![Booking](docs/screenshots/booking.png)
-
-### Live Map & Tracking
-![Tracking](docs/screenshots/tracking.png)
-
-### SOS Emergency Dashboard
-![SOS](docs/screenshots/sos.png)
-
-### Trusted Contacts Registry
-![Contacts](docs/screenshots/contacts.png)
-
-### Driver Monitoring Console
-![Driver Dashboard](docs/screenshots/driver-dashboard.png)
-
-### Command Center Dispatch Board
-![Admin Dashboard](docs/screenshots/admin-dashboard.png)
-
-### Driver Document Verification
-![Admin Verification](docs/screenshots/admin-verification.png)
-
-### Platform Safety Analytics
-![Analytics](docs/screenshots/analytics.png)
-
----
-
-## 9. License
+## 8. License
 HerRide is open-source software licensed under the MIT License. Built as a startup MVP concept.
 
