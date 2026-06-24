@@ -40,6 +40,7 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/api-docs/**",
             "/actuator/health",
+            "/health",
             "/ws/**",
             "/api/v1/webhooks/**",
             "/api/v1/ride/share/**"
