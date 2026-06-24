@@ -6,6 +6,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
+    name = "app.kafka.enabled",
+    havingValue = "true",
+    matchIfMissing = true
+)
 public class KafkaTopicConfig {
 
     public static final String TRIP_REQUESTED_TOPIC = "trip.requested";
