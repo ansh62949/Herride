@@ -57,11 +57,18 @@ public class TripEventProducer {
         publish(KafkaTopicConfig.TRIP_CANCELLED_TOPIC, trip);
     }
 
+    @org.springframework.beans.factory.annotation.Value("${app.kafka.enabled:true}")
+    private boolean kafkaEnabled;
+
     public void publishSosTriggered(SosAlertResponse alert) {
         try {
             eventPublisher.publishEvent(new LocalSosTriggeredEvent(alert));
         } catch (Exception e) {
             log.error("Failed to publish local LocalSosTriggeredEvent for alertId={}: {}", alert.getId(), e.getMessage());
+        }
+        if (!kafkaEnabled) {
+            log.info("Kafka is disabled. Skipping publish of SOS alert to Kafka.");
+            return;
         }
         try {
             String payload = objectMapper.writeValueAsString(alert);
@@ -74,6 +81,10 @@ public class TripEventProducer {
     }
 
     private void publish(String topic, TripResponse trip) {
+        if (!kafkaEnabled) {
+            log.info("Kafka is disabled. Skipping publish to topic: {}", topic);
+            return;
+        }
         try {
             String payload = objectMapper.writeValueAsString(trip);
             kafkaTemplate.send(topic, trip.getId().toString(), payload);

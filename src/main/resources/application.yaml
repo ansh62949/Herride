@@ -30,6 +30,8 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    listener:
+      auto-startup: ${KAFKA_ENABLED:true}
     properties:
       security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
       sasl.mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
@@ -74,6 +76,7 @@ resilience4j:
 app:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   kafka:
+    enabled: ${KAFKA_ENABLED:true}
     replication-factor: 1
   jwt:
     secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
