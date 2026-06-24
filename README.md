@@ -281,6 +281,54 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## 8. License
+## 8. End-to-End User & Testing Flow
+
+To test the complete platform journey from onboarding to payment completion, follow these sequential steps:
+
+### Step 1: Create a Driver Account
+1. Open the application (local or deployed link).
+2. Go to the sign-up flow, enter a new phone number, and choose **Female Driver** (Gender: **Female**).
+3. Submit the verification OTP (frictionless testing auto-fills this).
+4. You will be redirected to the **Driver Dashboard** which displays a warning that **"Verification Documents Required"**.
+5. Click **Go to Verification Center**, fill out your vehicle details, and submit.
+6. The dashboard will now transition to showing **"Account Verification Pending"**.
+
+### Step 2: Approve the Driver via Admin Panel
+1. Sign out of the driver account, or open a new incognito window.
+2. Go to the sign-in page, click **"System Administrator Login"** at the bottom, and log in with the admin credentials:
+   - **Email**: `admin@herride.com`
+   - **Password**: `admin123`
+3. Go to the **Drivers** tab from the Admin menu.
+4. Locate the newly registered driver in the pending queue and click **Approve Driver**.
+
+### Step 3: Go Online as Driver
+1. Log back in as the approved driver user.
+2. Toggle status to **ONLINE** (pulsing green indicator). The driver is now visible on the map and active in the backend dispatch pool. Keep this tab open.
+
+### Step 4: Book a Ride as Rider
+1. In a separate browser window, register or log in as a **Rider** (Gender: **Female**).
+2. Enter pickup and destination addresses on the map screen.
+3. Select your ride tier (e.g. Sedan) and click **Confirm Booking**.
+4. The screen transitions to **"Matching with Driver"**. The backend assigns the online driver.
+
+### Step 5: Accept & Drive (Journey Progression)
+1. Switch back to the **Driver** window. An incoming ride request overlay modal will appear.
+2. Click **Accept & Navigate**.
+3. Progression states are managed step-by-step:
+   - **Start Driving (En Route)** -> Transitions trip status to `DRIVER_ARRIVING`.
+   - **Arrived at Pickup Location** -> Transitions trip status to `RIDER_PICKED`.
+   - **Start the Ride** -> Transitions trip status to `IN_PROGRESS`.
+   - **Complete the Ride** -> Transitions trip status to `COMPLETED`.
+4. Switch to the Rider window to verify coordinates and states updating live in real-time.
+
+### Step 6: Checkout & Payment
+1. Once the trip is completed, the Rider screen prompts for payment.
+2. Click **Pay Now** to open the sandbox Paystack payment gateway simulator.
+3. Complete the mock payment using UPI/Card.
+4. Upon successful payment completion, the rider is redirected back to the app, showing the trip marked as `PAID` and opening the reviews/ratings form.
+
+---
+
+## 9. License
 HerRide is open-source software licensed under the MIT License. Built as a startup MVP concept.
 
