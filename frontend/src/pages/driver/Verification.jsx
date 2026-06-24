@@ -24,12 +24,12 @@ export default function Verification() {
   const [vehicleColor, setVehicleColor] = useState('');
   const [licenseNumber, setLicenseNumber] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      uploadDriverDocs({
+    try {
+      const success = await uploadDriverDocs({
         selfie: selfie?.name || 'selfie.jpg',
         idCard: idCard?.name || 'id_card.pdf',
         license: license?.name || 'license.pdf'
@@ -42,8 +42,14 @@ export default function Verification() {
         vehicleColor,
         licenseNumber
       });
+      if (success) {
+        navigate('/driver');
+      }
+    } catch (err) {
+      console.error('Failed to submit documents:', err);
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   return (

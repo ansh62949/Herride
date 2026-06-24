@@ -74,7 +74,19 @@ export default function DriverDashboard() {
 
   React.useEffect(() => {
     loadDriverProfile();
-  }, [loadDriverProfile]);
+
+    // Poll driver profile status if it's pending approval
+    let intervalId;
+    if (driverDocs.status === 'PENDING') {
+      intervalId = setInterval(() => {
+        loadDriverProfile();
+      }, 3000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [loadDriverProfile, driverDocs.status]);
 
   const stats = [
     { label: "Today's Earnings", val: `₹${driverEarnings.today.toFixed(2)}`, icon: <IndianRupee className="w-5 h-5 text-primary" />, desc: `Week total: ₹${driverEarnings.week.toFixed(2)}` },

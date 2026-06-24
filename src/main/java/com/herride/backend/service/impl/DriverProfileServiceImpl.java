@@ -59,7 +59,23 @@ public class DriverProfileServiceImpl implements DriverProfileService {
                 .licenseNumber(request.getLicenseNumber())
                 .build();
 
-        return toResponse(driverProfileRepository.save(profile));
+        DriverProfile savedProfile = driverProfileRepository.save(profile);
+
+        // Auto-approve after 8 seconds in dev/local mode
+        new Thread(() -> {
+            try {
+                Thread.sleep(8000);
+                driverProfileRepository.findByUserId(user.getId()).ifPresent(p -> {
+                    p.setVerificationStatus(VerificationStatus.VERIFIED);
+                    driverProfileRepository.save(p);
+                    System.out.println("[DEV SIMULATION] Automatically verified driver profile for user: " + user.getEmail());
+                });
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+
+        return toResponse(savedProfile);
     }
 
     @Override

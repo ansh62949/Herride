@@ -219,7 +219,22 @@ export const useHerRideStore = create((set, get) => ({
       chatHistory: [],
       activeSosAlert: null,
       trustedContacts: [],
-      safetyCheckin: null
+      safetyCheckin: null,
+      driverOnline: false,
+      driverDocs: {
+        selfie: null,
+        idCard: null,
+        license: null,
+        status: 'NONE'
+      },
+      driverEarnings: {
+        today: 0,
+        trips: 0,
+        acceptanceRate: 100,
+        safetyRating: 5.0,
+        week: 0.00
+      },
+      incomingRideRequest: null
     });
   },
 
@@ -694,16 +709,15 @@ export const useHerRideStore = create((set, get) => ({
     }
   },
 
-  createDriverProfile: async (docs) => {
-    // Format payload matching DriverProfileRequest
+  createDriverProfile: async (vehicleDetails) => {
     const payload = {
-      vehicleType: docs.vehicleType || 'SEDAN',
-      vehicleMake: docs.vehicleMake || 'Maruti Suzuki',
-      vehicleModel: docs.vehicleModel || 'Swift Dzire',
-      vehicleYear: docs.vehicleYear || '2024',
-      plateNumber: docs.plateNumber || 'DL01AB1234',
-      vehicleColor: docs.vehicleColor || 'Silver',
-      licenseNumber: docs.licenseNumber || 'DL01-20241234567'
+      vehicleType: vehicleDetails.vehicleType,
+      vehicleMake: vehicleDetails.vehicleMake,
+      vehicleModel: vehicleDetails.vehicleModel,
+      vehicleYear: vehicleDetails.vehicleYear,
+      plateNumber: vehicleDetails.plateNumber,
+      vehicleColor: vehicleDetails.vehicleColor,
+      licenseNumber: vehicleDetails.licenseNumber
     };
 
     try {
@@ -745,16 +759,7 @@ export const useHerRideStore = create((set, get) => ({
     });
 
     // Create backend profile with vehicle details passed from the user
-    const success = await get().createDriverProfile({
-      vehicleType: vehicleDetails.vehicleType || 'SEDAN',
-      vehicleMake: vehicleDetails.vehicleMake || 'Maruti Suzuki',
-      vehicleModel: vehicleDetails.vehicleModel || 'Swift Dzire',
-      vehicleYear: vehicleDetails.vehicleYear || '2024',
-      plateNumber: vehicleDetails.plateNumber || 'DL01AB1234',
-      vehicleColor: vehicleDetails.vehicleColor || 'Silver',
-      licenseNumber: vehicleDetails.licenseNumber || 'DL01-20241234567'
-    });
-
+    const success = await get().createDriverProfile(vehicleDetails);
     return success;
   },
 
