@@ -160,20 +160,23 @@ class TripServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw bad request when offline driver tries to accept")
-    void shouldThrowWhenOfflineDriverAcceptsTrip() {
+    @DisplayName("Should accept trip successfully when offline")
+    void shouldAcceptTripSuccessfullyWhenOffline() {
         driverProfile.setDriverStatus(DriverStatus.OFFLINE);
 
         when(userRepository.findByEmail("driver@test.com")).thenReturn(Optional.of(driver));
-        when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
         when(driverProfileRepository.findByUserId(driver.getId()))
                 .thenReturn(Optional.of(driverProfile));
+        when(tripRepository.countActiveTripsForDriverExcludingTrip(driver.getId(), 1L)).thenReturn(0L);
+        when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
+        when(tripRepository.save(any(Trip.class))).thenReturn(trip);
+        when(driverProfileRepository.save(any())).thenReturn(driverProfile);
 
-        assertThatThrownBy(() -> tripService.acceptTrip("driver@test.com", 1L))
-                .isInstanceOf(AppException.class)
-                .hasMessageContaining("must be online")
-                .extracting("status")
-                .isEqualTo(HttpStatus.BAD_REQUEST);
+        TripResponse response = tripService.acceptTrip("driver@test.com", 1L);
+
+        assertThat(response.getStatus()).isEqualTo(TripStatus.DRIVER_ASSIGNED);
+        assertThat(driverProfile.getDriverStatus()).isEqualTo(DriverStatus.ON_TRIP);
+        verify(tripEventProducer).publishTripAccepted(any());
     }
 
     @Test

@@ -109,14 +109,14 @@ class PricingServiceTest {
     }
 
     @Test
-    @DisplayName("Should round fare to nearest 50 Naira")
-    void shouldRoundFareToNearest50() {
+    @DisplayName("Should round fare to nearest 10 Rupees")
+    void shouldRoundFareToNearest10Rupees() {
         mockRedisGeoWithDriverCount(0);
 
         FareEstimateResponse response = pricingService.estimateFare(
                 PICKUP_LAT, PICKUP_LNG, DEST_LAT, DEST_LNG, VehicleType.SEDAN);
 
-        assertThat(response.getEstimatedFare() % 50).isEqualTo(0.0);
+        assertThat(response.getEstimatedFare() % 10).isEqualTo(0.0);
     }
 
     @Test

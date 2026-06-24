@@ -27,7 +27,7 @@ jwt:
   secret: ${JWT_SECRET}
 
 app:
-  frontend-url: ${FRONTEND_URL:http://localhost:5173}
+  frontend-url: ${FRONTEND_URL:https://herride-six.vercel.app}
   kafka:
     enabled: ${KAFKA_ENABLED:true}
     replication-factor: ${KAFKA_REPLICATION_FACTOR:2}
